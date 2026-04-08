@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Exam</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, sans-serif; background: #f5f5f7; padding: 20px; }
+    .card { background: white; border-radius: 16px; padding: 28px 24px;
+            max-width: 420px; margin: 0 auto;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+    h1 { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+    label { font-size: 13px; color: #555; display: block; margin-bottom: 4px; }
+    input { width: 100%; padding: 12px 14px; border: 1px solid #ddd;
+            border-radius: 10px; font-size: 16px; margin-bottom: 16px; outline: none; }
+    input:focus { border-color: #0F6E56; }
+    .chapter-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    .chapter-row input { margin-bottom: 0; flex: 1; }
+    .add-ch { background: #e1f5ee; border: none; padding: 10px 14px;
+              border-radius: 10px; font-size: 14px; cursor: pointer;
+              color: #0F6E56; width: 100%; margin-bottom: 16px; }
+    button.save { width: 100%; padding: 13px; background: #0F6E56; color: white;
+                  border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
+    .back { display: block; text-align: center; margin-top: 12px;
+            font-size: 14px; color: #0F6E56; text-decoration: none; }
+    #msg { text-align: center; font-size: 13px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📅 Add Exam</h1>
+    <label>Exam title</label>
+    <input type="text" id="title" placeholder="e.g. Physics Unit Test" />
+    <label>Subject</label>
+    <input type="text" id="subject" placeholder="e.g. Physics" />
+    <label>Exam date</label>
+    <input type="date" id="examDate" />
+    <label>Chapters / Portion</label>
+    <div id="chapters">
+      <div class="chapter-row">
+        <input type="text" placeholder="e.g. Chapter 1 - Motion" class="ch-input" />
+      </div>
+    </div>
+    <button class="add-ch" onclick="addChapter()">+ Add another chapter</button>
+    <button class="save" onclick="save()">Save Exam</button>
+    <a href="exams.html" class="back">← Back</a>
+    <div id="msg"></div>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) window.location.href = "login.html";
+
+    function addChapter() {
+      const div = document.createElement("div");
+      div.className = "chapter-row";
+      div.innerHTML = `<input type="text" placeholder="e.g. Chapter 2 - Force" class="ch-input" />`;
+      document.getElementById("chapters").appendChild(div);
+    }
+
+    async function save() {
+      const title    = document.getElementById("title").value.trim();
+      const subject  = document.getElementById("subject").value.trim();
+      const examDate = document.getElementById("examDate").value;
+      const msg      = document.getElementById("msg");
+
+      const portion = Array.from(document.querySelectorAll(".ch-input"))
+        .map(i => i.value.trim())
+        .filter(v => v !== "")
+        .map(name => ({ name, completed: false }));
+
+      if (!title || !subject || !examDate) {
+        msg.style.color = "red";
+        msg.textContent = "Please fill title, subject and date";
+        return;
+      }
+
+      const res = await fetch("http://localhost:8080/exams", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          subjectName: subject,
+          examDate,
+          userId: user.uid,
+          portion
+        })
+      });
+
+      if (res.ok) {
+        msg.style.color = "green";
+        msg.textContent = "Exam saved!";
+        setTimeout(() => window.location.href = "exams.html", 1000);
+      } else {
+        msg.style.color = "red";
+        msg.textContent = "Something went wrong";
+      }
+    }
+  </script>
+</body>
+</html>
