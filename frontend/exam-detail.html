@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Detail</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, sans-serif; background: #f5f5f7; padding: 20px; }
+    .back { font-size: 14px; color: #0F6E56; text-decoration: none;
+            display: block; margin-bottom: 16px; }
+    .card { background: white; border-radius: 14px; padding: 20px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.06); margin-bottom: 16px; }
+    h1 { font-size: 20px; font-weight: 600; }
+    .meta { font-size: 13px; color: #888; margin-top: 4px; }
+    .date { font-size: 14px; color: #0F6E56; margin-top: 6px; font-weight: 500; }
+    .progress-bar { background: #e0e0e0; border-radius: 6px;
+                    height: 8px; margin: 12px 0; }
+    .progress-fill { background: #0F6E56; height: 8px; border-radius: 6px;
+                     transition: width 0.3s; }
+    .progress-text { font-size: 12px; color: #888; }
+    h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+    .chapter { display: flex; align-items: center; gap: 12px;
+               padding: 14px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+    .chapter:last-child { border-bottom: none; }
+    .ch-check { width: 24px; height: 24px; border-radius: 6px;
+                border: 2px solid #ddd; display: flex; align-items: center;
+                justify-content: center; flex-shrink: 0; transition: all 0.2s;
+                font-size: 14px; }
+    .ch-check.done { background: #0F6E56; border-color: #0F6E56; color: white; }
+    .ch-name { font-size: 15px; }
+    .ch-name.done { text-decoration: line-through; color: #aaa; }
+    .empty { text-align: center; color: #aaa; padding: 20px 0; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <a href="exams.html" class="back">← Back to exams</a>
+
+  <div class="card">
+    <h1 id="title">Loading...</h1>
+    <div class="meta"  id="subject"></div>
+    <div class="date"  id="date"></div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="bar" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="progress"></div>
+  </div>
+
+  <div class="card">
+    <h2>📖 Chapters</h2>
+    <div id="chapters"></div>
+  </div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) window.location.href = "login.html";
+
+    const id = new URLSearchParams(window.location.search).get("id");
+
+    async function load() {
+      const res = await fetch(`http://localhost:8080/exams/detail/${id}`);
+      const exam = await res.json();
+
+      document.getElementById("title").textContent   = exam.title;
+      document.getElementById("subject").textContent = exam.subjectName;
+      document.getElementById("date").textContent    = "📅 " + exam.examDate;
+
+      const portion = exam.portion || [];
+      const done    = portion.filter(c => c.completed).length;
+      const total   = portion.length;
+      const pct     = total ? Math.round((done / total) * 100) : 0;
+
+      document.getElementById("bar").style.width      = pct + "%";
+      document.getElementById("progress").textContent = `${done}/${total} chapters done (${pct}%)`;
+
+      const div = document.getElementById("chapters");
+      div.innerHTML = "";
+
+      if (!portion.length) {
+        div.innerHTML = '<div class="empty">No chapters added</div>';
+        return;
+      }
+
+      portion.forEach((ch, i) => {
+        div.innerHTML += `
+          <div class="chapter" onclick="toggle(${i})">
+            <div class="ch-check ${ch.completed ? 'done' : ''}">${ch.completed ? '✓' : ''}</div>
+            <div class="ch-name ${ch.completed ? 'done' : ''}">${ch.name}</div>
+          </div>`;
+      });
+    }
+
+    async function toggle(index) {
+      await fetch(`http://localhost:8080/exams/${id}/chapter/${index}`, { method: "PUT" });
+      load();
+    }
+
+    load();
+  </script>
+</body>
+</html>
