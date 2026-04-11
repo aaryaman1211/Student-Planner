@@ -76,8 +76,7 @@
           const user = await res.json();
           localStorage.setItem("user", JSON.stringify(user));
           localStorage.setItem("token", token);
-          alert("Login successful! Welcome " + user.name);
-          // dashboard.html will be built on Day 4
+          window.location.href = "dashboard.html";
         }
       } catch (err) {
         msg.textContent = "Login failed: " + err.message;
