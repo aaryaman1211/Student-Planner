@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Student Planner</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, sans-serif; background: #f5f5f7; padding: 20px; }
+
+    .greeting { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+    .sub { font-size: 14px; color: #888; margin-bottom: 20px; }
+
+    .nav-row { display: flex; gap: 10px; margin-bottom: 24px; }
+    .nav-btn { flex: 1; padding: 16px; border-radius: 14px; border: none;
+               font-size: 15px; font-weight: 500; cursor: pointer;
+               text-align: center; text-decoration: none; display: block; }
+    .nav-btn.purple { background: #EEEDFE; color: #534AB7; }
+    .nav-btn.teal   { background: #E1F5EE; color: #0F6E56; }
+
+    .notif-banner { background: #FFF8E1; border-radius: 12px; padding: 14px;
+                    margin-bottom: 20px; font-size: 14px; color: #856404;
+                    line-height: 1.7; display: none; }
+
+    .section-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+
+    .card { background: white; border-radius: 12px; padding: 14px;
+            margin-bottom: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+            display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer; }
+    .card:active { opacity: 0.8; }
+    .card-left .title   { font-size: 15px; font-weight: 500; }
+    .card-left .subject { font-size: 13px; color: #888; margin-top: 2px; }
+    .card-left .date    { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+    .badge { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+    .badge.assignment { background: #EEEDFE; color: #534AB7; }
+    .badge.exam       { background: #E1F5EE; color: #0F6E56; }
+
+    .section { margin-bottom: 28px; }
+    .empty { font-size: 14px; color: #aaa; text-align: center; padding: 20px 0; }
+
+    .logout { background: none; border: 1px solid #ddd; padding: 10px 20px;
+              border-radius: 10px; font-size: 14px; color: #888;
+              cursor: pointer; display: block; margin: 10px auto 30px; }
+  </style>
+</head>
+<body>
+
+  <div class="greeting" id="greeting">Hello 👋</div>
+  <div class="sub">Here's what's coming up</div>
+
+  <div id="notif-banner" class="notif-banner"></div>
+
+  <div class="nav-row">
+    <a href="assignments.html" class="nav-btn purple">📝 Assignments</a>
+    <a href="exams.html"       class="nav-btn teal">📅 Exams</a>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⏰ Due in the next 7 days</div>
+    <div id="upcoming"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 Later</div>
+    <div id="later"></div>
+  </div>
+
+  <button class="logout" onclick="logout()">Logout</button>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) window.location.href = "login.html";
+
+    // Greeting based on time of day
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+    document.getElementById("greeting").textContent = greet + " " + (user.name || "") + " 👋";
+
+    async function load() {
+      try {
+        const [aRes, eRes] = await Promise.all([
+          fetch(`http://localhost:8080/assignments/${user.uid}`),
+          fetch(`http://localhost:8080/exams/${user.uid}`)
+        ]);
+
+        const assignments = await aRes.json();
+        const exams       = await eRes.json();
+
+        // Show notification banner for items due in 3 days
+        const today3 = new Date();
+        today3.setHours(0, 0, 0, 0);
+        const in3days = new Date(today3);
+        in3days.setDate(in3days.getDate() + 3);
+
+        const reminders = [];
+        assignments.filter(a => !a.completed).forEach(a => {
+          const due = new Date(a.dueDate);
+          if (due >= today3 && due <= in3days) {
+            reminders.push("📝 Assignment due: " + a.title + " (" + a.subjectName + ") on " + a.dueDate);
+          }
+        });
+        exams.forEach(e => {
+          const due = new Date(e.examDate);
+          if (due >= today3 && due <= in3days) {
+            reminders.push("📅 Exam coming up: " + e.title + " (" + e.subjectName + ") on " + e.examDate);
+          }
+        });
+
+        if (reminders.length) {
+          const banner = document.getElementById("notif-banner");
+          banner.style.display = "block";
+          banner.innerHTML = "🔔 <strong>Reminders (next 3 days):</strong><br>" +
+            reminders.map(r => "• " + r).join("<br>");
+        }
+
+        // Combine assignments and exams into one list sorted by date
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const in7days = new Date(today);
+        in7days.setDate(in7days.getDate() + 7);
+
+        const items = [
+          ...assignments
+            .filter(a => !a.completed)
+            .map(a => ({
+              id:          a.id,
+              title:       a.title,
+              subjectName: a.subjectName,
+              deadline:    new Date(a.dueDate),
+              dateStr:     a.dueDate,
+              type:        "assignment"
+            })),
+          ...exams.map(e => ({
+            id:          e.id,
+            title:       e.title,
+            subjectName: e.subjectName,
+            deadline:    new Date(e.examDate),
+            dateStr:     e.examDate,
+            type:        "exam"
+          }))
+        ].sort((a, b) => a.deadline - b.deadline);
+
+        const upcoming = items.filter(i => i.deadline >= today && i.deadline <= in7days);
+        const later    = items.filter(i => i.deadline > in7days);
+
+        renderList("upcoming", upcoming);
+        renderList("later", later);
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderList(id, items) {
+      const div = document.getElementById(id);
+      div.innerHTML = "";
+      if (!items.length) {
+        div.innerHTML = '<div class="empty">Nothing here 🎉</div>';
+        return;
+      }
+      items.forEach(item => {
+        const link = item.type === "exam"
+          ? `exam-detail.html?id=${item.id}`
+          : "assignments.html";
+        div.innerHTML += `
+          <div class="card" onclick="window.location.href='${link}'">
+            <div class="card-left">
+              <div class="title">${item.title}</div>
+              <div class="subject">${item.subjectName}</div>
+              <div class="date">${item.dateStr}</div>
+            </div>
+            <span class="badge ${item.type}">
+              ${item.type === "exam" ? "Exam" : "Assignment"}
+            </span>
+          </div>`;
+      });
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+
+    load();
+  </script>
+</body>
+</html>
