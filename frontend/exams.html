@@ -3,29 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
   <title>Exams</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, sans-serif; background: #f5f5f7; padding: 20px; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    h1 { font-size: 22px; font-weight: 600; }
-    .btn { background: #0F6E56; color: white; border: none; padding: 10px 16px;
-           border-radius: 10px; font-size: 14px; cursor: pointer; text-decoration: none; }
-    .card { background: white; border-radius: 12px; padding: 16px;
-            margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); cursor: pointer; }
-    .title    { font-size: 16px; font-weight: 500; }
-    .subject  { font-size: 13px; color: #888; margin-top: 4px; }
-    .date     { font-size: 13px; color: #0F6E56; margin-top: 4px; }
-    .progress { font-size: 12px; color: #aaa; margin-top: 6px; }
-    .empty { text-align: center; color: #aaa; padding: 40px 0; font-size: 14px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root { --t: #00B894; --bg: #F0EFFA; --text: #1a1a2e; --sub: #6b7280; }
+    body { font-family: -apple-system, sans-serif; background: var(--bg);
+           color: var(--text); padding-bottom: 90px; }
+    @keyframes up { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    .a1 { animation: up .35s ease both; }
+    .a2 { animation: up .35s .06s ease both; }
+
+    .header { background: white; padding: 56px 20px 20px;
+              box-shadow: 0 2px 12px rgba(0,184,148,0.08); }
+    .header-row { display: flex; justify-content: space-between; align-items: center; }
+    h1 { font-size: 24px; font-weight: 700; }
+    .add-btn { background: linear-gradient(135deg, #00B894, #55efc4);
+               color: white; border: none; padding: 10px 18px;
+               border-radius: 20px; font-size: 14px; font-weight: 600;
+               cursor: pointer; text-decoration: none; display: inline-block;
+               box-shadow: 0 4px 12px rgba(0,184,148,0.3);
+               transition: transform 0.15s; }
+    .add-btn:active { transform: scale(0.95); }
+
+    .content { padding: 20px; }
+
+    .card { background: white; border-radius: 16px; padding: 18px;
+            margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            cursor: pointer; transition: transform 0.15s; }
+    .card:active { transform: scale(0.98); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .title   { font-size: 16px; font-weight: 600; }
+    .subject { font-size: 13px; color: var(--sub); margin-top: 3px; }
+    .date    { font-size: 12px; color: var(--t); margin-top: 3px; font-weight: 600; }
+    .prog-wrap { margin-top: 12px; }
+    .prog-bar { background: #e0e0e0; border-radius: 6px; height: 6px; overflow: hidden; }
+    .prog-fill { height: 6px; border-radius: 6px;
+                 background: linear-gradient(90deg, #00B894, #55efc4);
+                 transition: width 0.6s ease; }
+    .prog-text { font-size: 12px; color: var(--sub); margin-top: 5px; }
+    .days-left { font-size: 12px; font-weight: 600; color: white;
+                 background: var(--t); padding: 4px 10px; border-radius: 20px; }
+    .empty { text-align: center; color: var(--sub); padding: 60px 0; font-size: 15px; }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+    .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: white;
+            border-top: 1px solid #f0efff; padding: 10px 0 24px;
+            display: flex; z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,0.06); }
+    .bnav a { flex: 1; display: flex; flex-direction: column; align-items: center;
+              text-decoration: none; gap: 3px; transition: transform 0.15s; }
+    .bnav a:active { transform: scale(0.92); }
+    .bnav-icon { font-size: 22px; }
+    .bnav-label { font-size: 11px; font-weight: 500; color: #6b7280; }
+    .bnav a.active .bnav-label { color: #6C5CE7; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>📅 Exams</h1>
-    <a href="add-exam.html" class="btn">+ Add</a>
+  <div class="header a1">
+    <div class="header-row">
+      <h1>📅 Exams</h1>
+      <a href="add-exam.html" class="add-btn">+ Add</a>
+    </div>
   </div>
-  <div id="list"></div>
+
+  <div class="content a2" id="list"></div>
+
+  <nav class="bnav">
+    <a href="dashboard.html">
+      <span class="bnav-icon">🏠</span>
+      <span class="bnav-label">Home</span>
+    </a>
+    <a href="assignments.html">
+      <span class="bnav-icon">📝</span>
+      <span class="bnav-label">Tasks</span>
+    </a>
+    <a href="exams.html" class="active">
+      <span class="bnav-icon">📅</span>
+      <span class="bnav-label">Exams</span>
+    </a>
+  </nav>
 
   <script>
     const user = JSON.parse(localStorage.getItem("user"));
@@ -36,29 +93,37 @@
       const data = await res.json();
       const list = document.getElementById("list");
       list.innerHTML = "";
-
       if (!data.length) {
-        list.innerHTML = '<div class="empty">No exams yet — add one!</div>';
+        list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No exams yet<br><small>Tap + Add to get started</small></div>';
         return;
       }
-
-      data.forEach(e => {
+      data.sort((a, b) => new Date(a.examDate) - new Date(b.examDate));
+      data.forEach((e, i) => {
         const done  = e.portion ? e.portion.filter(c => c.completed).length : 0;
         const total = e.portion ? e.portion.length : 0;
+        const pct   = total ? Math.round((done / total) * 100) : 0;
+        const daysLeft = Math.ceil((new Date(e.examDate) - new Date()) / 86400000);
+        const daysStr  = daysLeft > 0 ? daysLeft + "d left" : daysLeft === 0 ? "Today!" : "Past";
         list.innerHTML += `
-          <div class="card" onclick="window.location.href='exam-detail.html?id=${e.id}'">
-            <div class="title">${e.title}</div>
-            <div class="subject">${e.subjectName}</div>
-            <div class="date">📅 ${e.examDate}</div>
-            <div class="progress">${done}/${total} chapters done</div>
+          <div class="card" style="animation: up .35s ${i*0.06}s ease both"
+               onclick="window.location.href='exam-detail.html?id=${e.id}'">
+            <div class="card-top">
+              <div>
+                <div class="title">${e.title}</div>
+                <div class="subject">${e.subjectName}</div>
+                <div class="date">📅 ${e.examDate}</div>
+              </div>
+              <span class="days-left">${daysStr}</span>
+            </div>
+            ${total > 0 ? `
+            <div class="prog-wrap">
+              <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+              <div class="prog-text">${done}/${total} chapters done</div>
+            </div>` : ''}
           </div>`;
       });
     }
-
     load();
   </script>
 </body>
-<div style="margin-bottom:16px">
-  <a href="dashboard.html" style="font-size:14px;color:#0F6E56;text-decoration:none;">← Dashboard</a>
-</div>
 </html>
