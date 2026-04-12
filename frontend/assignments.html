@@ -2,66 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="manifest" href="manifest.json">
   <title>Assignments</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root { --p: #6C5CE7; --bg: #F0EFFA; --card: #fff; --text: #1a1a2e; --sub: #6b7280; }
-    body { font-family: -apple-system, sans-serif; background: var(--bg);
-           color: var(--text); padding-bottom: 90px; }
-    @keyframes up { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    :root { --bg:#0F0E17; --card:#1C1B29; --card2:#26253A; --p:#7C6FF7; --p2:#a29bfe;
+            --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }
+    body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text);
+           padding-bottom: max(90px, calc(70px + env(safe-area-inset-bottom))); }
+    @keyframes up { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
     .a1 { animation: up .35s ease both; }
-    .a2 { animation: up .35s .06s ease both; }
+    .a2 { animation: up .35s .07s ease both; }
 
-    .header { background: white; padding: 56px 20px 20px;
-              box-shadow: 0 2px 12px rgba(108,92,231,0.08); }
+    .header { background: var(--card); border-bottom: 1px solid var(--border);
+              padding: max(52px, calc(34px + env(safe-area-inset-top))) 20px 18px; }
     .header-row { display: flex; justify-content: space-between; align-items: center; }
-    h1 { font-size: 24px; font-weight: 700; }
-    .add-btn { background: linear-gradient(135deg, #6C5CE7, #a29bfe);
-               color: white; border: none; padding: 10px 18px;
-               border-radius: 20px; font-size: 14px; font-weight: 600;
-               cursor: pointer; text-decoration: none; display: inline-block;
-               box-shadow: 0 4px 12px rgba(108,92,231,0.3);
-               transition: transform 0.15s; }
-    .add-btn:active { transform: scale(0.95); }
+    h1 { font-size: 24px; font-weight: 800; }
+    .add-btn { background: linear-gradient(135deg, var(--p), var(--p2)); color: white;
+               border: none; padding: 10px 20px; border-radius: 20px; font-size: 14px;
+               font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block;
+               box-shadow: 0 4px 15px rgba(124,111,247,0.4); transition: transform 0.15s; }
+    .add-btn:active { transform: scale(0.94); }
 
-    .content { padding: 20px; }
-
-    .card { background: white; border-radius: 16px; padding: 16px 18px;
-            margin-bottom: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.15s; }
-    .card:active { transform: scale(0.98); }
-    .title   { font-size: 15px; font-weight: 600; }
+    .content { padding: 18px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 16px 18px; margin-bottom: 10px; transition: background 0.15s; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .title   { font-size: 15px; font-weight: 600; color: var(--text); }
     .subject { font-size: 13px; color: var(--sub); margin-top: 3px; }
-    .due     { font-size: 12px; color: var(--p); margin-top: 3px; font-weight: 500; }
-    .done-text { text-decoration: line-through; color: #aaa; }
-    .actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
-    .tick-btn { background: #d1fae5; border: none; padding: 8px 12px;
-                border-radius: 10px; font-size: 13px; cursor: pointer;
-                color: #059669; font-weight: 600; transition: transform 0.15s; }
-    .tick-btn:active { transform: scale(0.92); }
-    .del-btn { background: #fee2e2; border: none; padding: 8px 10px;
-               border-radius: 10px; font-size: 13px; cursor: pointer;
-               color: #ef4444; transition: transform 0.15s; }
-    .del-btn:active { transform: scale(0.92); }
-    .done-badge { background: #d1fae5; color: #059669; font-size: 12px;
-                  font-weight: 600; padding: 4px 10px; border-radius: 20px; }
-    .empty { text-align: center; color: var(--sub); padding: 60px 0;
-             font-size: 15px; }
-    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .due     { font-size: 12px; color: var(--p2); margin-top: 3px; font-weight: 600; }
+    .done-text { text-decoration: line-through; color: var(--sub); }
+    .actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .tick-btn { background: rgba(0,212,168,0.15); border: none; padding: 8px 12px;
+                border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+                color: #00D4A8; transition: transform 0.15s; }
+    .tick-btn:active { transform: scale(0.9); }
+    .edit-btn { background: rgba(124,111,247,0.15); border: none; padding: 8px 10px;
+                border-radius: 10px; font-size: 14px; cursor: pointer;
+                color: var(--p2); transition: transform 0.15s; }
+    .edit-btn:active { transform: scale(0.9); }
+    .del-btn  { background: rgba(255,107,107,0.15); border: none; padding: 8px 10px;
+                border-radius: 10px; font-size: 14px; cursor: pointer;
+                color: #FF6B6B; transition: transform 0.15s; }
+    .del-btn:active { transform: scale(0.9); }
+    .done-badge { background: rgba(0,212,168,0.15); color: #00D4A8; font-size: 11px;
+                  font-weight: 700; padding: 5px 10px; border-radius: 20px; }
+    .empty { text-align: center; color: var(--sub); padding: 60px 0; font-size: 15px; }
+    .empty-icon { font-size: 44px; margin-bottom: 12px; }
 
-    .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: white;
-            border-top: 1px solid #f0efff; padding: 10px 0 24px;
-            display: flex; z-index: 100; box-shadow: 0 -4px 20px rgba(108,92,231,0.08); }
+    .bnav { position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(20,19,34,0.95); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border);
+            padding: 10px 0 max(20px, env(safe-area-inset-bottom));
+            display: flex; z-index: 100; }
     .bnav a { flex: 1; display: flex; flex-direction: column; align-items: center;
-              text-decoration: none; gap: 3px; transition: transform 0.15s; }
-    .bnav a:active { transform: scale(0.92); }
-    .bnav-icon { font-size: 22px; }
-    .bnav-label { font-size: 11px; font-weight: 500; color: var(--sub); }
-    .bnav a.active .bnav-label { color: var(--p); }
+              text-decoration: none; gap: 3px; }
+    .bnav a:active { transform: scale(0.88); }
+    .bnav-icon  { font-size: 22px; }
+    .bnav-label { font-size: 10px; font-weight: 600; color: var(--sub); }
+    .bnav a.active .bnav-label { color: var(--p2); }
   </style>
 </head>
 <body>
@@ -75,18 +77,10 @@
   <div class="content a2" id="list"></div>
 
   <nav class="bnav">
-    <a href="dashboard.html">
-      <span class="bnav-icon">🏠</span>
-      <span class="bnav-label">Home</span>
-    </a>
-    <a href="assignments.html" class="active">
-      <span class="bnav-icon">📝</span>
-      <span class="bnav-label">Tasks</span>
-    </a>
-    <a href="exams.html">
-      <span class="bnav-icon">📅</span>
-      <span class="bnav-label">Exams</span>
-    </a>
+    <a href="dashboard.html"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span></a>
+    <a href="assignments.html" class="active"><span class="bnav-icon">📝</span><span class="bnav-label">Tasks</span></a>
+    <a href="exams.html"><span class="bnav-icon">📅</span><span class="bnav-label">Exams</span></a>
+    <a href="account.html"><span class="bnav-icon">👤</span><span class="bnav-label">Account</span></a>
   </nav>
 
   <script>
@@ -99,10 +93,9 @@
       const list = document.getElementById("list");
       list.innerHTML = "";
       if (!data.length) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No assignments yet<br><small>Tap + Add to get started</small></div>';
+        list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No assignments yet<br><small style="font-size:13px;margin-top:6px;display:block">Tap + Add to get started</small></div>';
         return;
       }
-      // Sort: incomplete first, then by date
       data.sort((a, b) => {
         if (a.completed !== b.completed) return a.completed ? 1 : -1;
         return new Date(a.dueDate) - new Date(b.dueDate);
@@ -110,16 +103,19 @@
       data.forEach((a, i) => {
         list.innerHTML += `
           <div class="card" style="animation: up .35s ${i*0.05}s ease both">
-            <div style="flex:1;min-width:0">
-              <div class="title ${a.completed ? 'done-text' : ''}">${a.title}</div>
-              <div class="subject">${a.subjectName}</div>
-              <div class="due">Due: ${a.dueDate}</div>
-            </div>
-            <div class="actions">
-              ${!a.completed
-                ? `<button class="tick-btn" onclick="complete('${a.id}')">✓ Done</button>`
-                : `<span class="done-badge">✓ Done</span>`}
-              <button class="del-btn" onclick="del('${a.id}')">🗑</button>
+            <div class="card-top">
+              <div style="flex:1;min-width:0">
+                <div class="title ${a.completed ? 'done-text' : ''}">${a.title}</div>
+                <div class="subject">${a.subjectName}</div>
+                <div class="due">Due: ${a.dueDate}</div>
+              </div>
+              <div class="actions">
+                ${!a.completed
+                  ? `<button class="tick-btn" onclick="complete('${a.id}')">✓ Done</button>`
+                  : `<span class="done-badge">✓ Done</span>`}
+                <button class="edit-btn" onclick="window.location.href='edit-assignment.html?id=${a.id}'">✏️</button>
+                <button class="del-btn"  onclick="del('${a.id}')">🗑</button>
+              </div>
             </div>
           </div>`;
       });

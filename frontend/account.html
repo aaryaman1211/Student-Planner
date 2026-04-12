@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="manifest" href="manifest.json">
+  <title>Account</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root { --bg:#0F0E17; --card:#1C1B29; --card2:#26253A; --p:#7C6FF7; --p2:#a29bfe;
+            --t:#00D4A8; --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }
+    body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text);
+           padding-bottom: max(90px, calc(70px + env(safe-area-inset-bottom))); }
+    @keyframes up { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+    .a1 { animation: up .4s ease both; }
+    .a2 { animation: up .4s .1s ease both; }
+    .a3 { animation: up .4s .18s ease both; }
+
+    .header { background: linear-gradient(135deg, #1a1040 0%, #241b5e 100%);
+              padding: max(52px, calc(34px + env(safe-area-inset-top))) 20px 60px;
+              text-align: center; position: relative; }
+    .header::after { content: ''; position: absolute; bottom: -40px; left: 0; right: 0;
+                     height: 80px; background: var(--bg); border-radius: 40px 40px 0 0; }
+    .avatar-big { width: 80px; height: 80px; border-radius: 26px;
+                  background: linear-gradient(135deg, var(--p), var(--p2));
+                  display: flex; align-items: center; justify-content: center;
+                  font-size: 34px; font-weight: 800; color: white;
+                  margin: 0 auto 14px; border: 3px solid rgba(255,255,255,0.15);
+                  box-shadow: 0 8px 30px rgba(124,111,247,0.4);
+                  position: relative; z-index: 1; }
+    .user-name  { font-size: 22px; font-weight: 800; color: white;
+                  position: relative; z-index: 1; }
+    .user-email { font-size: 14px; color: rgba(255,255,255,0.6); margin-top: 4px;
+                  position: relative; z-index: 1; }
+
+    .content { padding: 20px 18px; }
+
+    .stats-row { display: flex; gap: 10px; margin-bottom: 24px; }
+    .stat { flex: 1; background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 16px; text-align: center; }
+    .stat-num   { font-size: 28px; font-weight: 800; color: var(--p); }
+    .stat-done  { color: var(--t); }
+    .stat-label { font-size: 12px; color: var(--sub); margin-top: 3px; }
+
+    .section { margin-bottom: 20px; }
+    .section-title { font-size: 12px; font-weight: 700; color: var(--sub);
+                     text-transform: uppercase; letter-spacing: 0.08em;
+                     margin-bottom: 10px; padding: 0 4px; }
+    .row { background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+           margin-bottom: 2px; padding: 16px 18px;
+           display: flex; justify-content: space-between; align-items: center; }
+    .row:first-of-type { border-radius: 14px 14px 4px 4px; }
+    .row:last-of-type  { border-radius: 4px 4px 14px 14px; }
+    .row:only-of-type  { border-radius: 14px; }
+    .row-label { font-size: 15px; font-weight: 500; }
+    .row-value { font-size: 14px; color: var(--sub); }
+    .row-arrow { color: var(--sub); font-size: 16px; }
+
+    .logout-btn { width: 100%; padding: 16px; background: rgba(255,107,107,0.12);
+                  border: 1.5px solid rgba(255,107,107,0.25); color: #FF6B6B;
+                  border-radius: 14px; font-size: 16px; font-weight: 700;
+                  cursor: pointer; margin-top: 8px; transition: transform 0.15s, background 0.15s; }
+    .logout-btn:active { transform: scale(0.97); background: rgba(255,107,107,0.2); }
+
+    .bnav { position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(20,19,34,0.95); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border);
+            padding: 10px 0 max(20px, env(safe-area-inset-bottom));
+            display: flex; z-index: 100; }
+    .bnav a { flex: 1; display: flex; flex-direction: column; align-items: center;
+              text-decoration: none; gap: 3px; }
+    .bnav a:active { transform: scale(0.88); }
+    .bnav-icon  { font-size: 22px; }
+    .bnav-label { font-size: 10px; font-weight: 600; color: var(--sub); }
+    .bnav a.active .bnav-label { color: var(--p2); }
+  </style>
+</head>
+<body>
+  <div class="header a1">
+    <div class="avatar-big" id="avatar">A</div>
+    <div class="user-name"  id="userName">Loading...</div>
+    <div class="user-email" id="userEmail"></div>
+  </div>
+
+  <div class="content">
+    <div class="stats-row a2">
+      <div class="stat">
+        <div class="stat-num" id="totalA">—</div>
+        <div class="stat-label">Assignments</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num stat-done" id="doneA">—</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="totalE">—</div>
+        <div class="stat-label">Exams</div>
+      </div>
+    </div>
+
+    <div class="section a3">
+      <div class="section-title">Account Info</div>
+      <div class="row">
+        <span class="row-label">Name</span>
+        <span class="row-value" id="rowName">—</span>
+      </div>
+      <div class="row">
+        <span class="row-label">Email</span>
+        <span class="row-value" id="rowEmail">—</span>
+      </div>
+    </div>
+
+    <div class="section a3">
+      <div class="section-title">App</div>
+      <div class="row">
+        <span class="row-label">Version</span>
+        <span class="row-value">1.0.0</span>
+      </div>
+      <div class="row">
+        <span class="row-label">Built with</span>
+        <span class="row-value">Java Spring Boot + Firebase</span>
+      </div>
+    </div>
+
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <nav class="bnav">
+    <a href="dashboard.html"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span></a>
+    <a href="assignments.html"><span class="bnav-icon">📝</span><span class="bnav-label">Tasks</span></a>
+    <a href="exams.html"><span class="bnav-icon">📅</span><span class="bnav-label">Exams</span></a>
+    <a href="account.html" class="active"><span class="bnav-icon">👤</span><span class="bnav-label">Account</span></a>
+  </nav>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) window.location.href = "login.html";
+
+    const name  = user.name  || "Student";
+    const email = user.email || "";
+    document.getElementById("avatar").textContent    = name.charAt(0).toUpperCase();
+    document.getElementById("userName").textContent  = name;
+    document.getElementById("userEmail").textContent = email;
+    document.getElementById("rowName").textContent   = name;
+    document.getElementById("rowEmail").textContent  = email;
+
+    async function loadStats() {
+      try {
+        const [aRes, eRes] = await Promise.all([
+          fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`),
+          fetch(`https://web-production-dc086.up.railway.app/exams/${user.uid}`)
+        ]);
+        const assignments = await aRes.json();
+        const exams       = await eRes.json();
+        document.getElementById("totalA").textContent = assignments.length;
+        document.getElementById("doneA").textContent  = assignments.filter(a => a.completed).length;
+        document.getElementById("totalE").textContent = exams.length;
+      } catch(e) {}
+    }
+
+    function logout() {
+      if (!confirm("Are you sure you want to logout?")) return;
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+
+    loadStats();
+  </script>
+</body>
+</html>

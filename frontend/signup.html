@@ -2,42 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Student Planner">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="manifest" href="manifest.json">
   <title>Sign Up</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: -apple-system, sans-serif; min-height: 100vh;
-           background: linear-gradient(145deg, #6C5CE7 0%, #a29bfe 100%);
-           display: flex; align-items: center; justify-content: center; padding: 24px; }
-    @keyframes up { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
-    .card { background: white; border-radius: 28px; padding: 36px 28px;
-            width: 100%; max-width: 380px;
-            box-shadow: 0 24px 60px rgba(108,92,231,0.3);
-            animation: up 0.5s ease both; }
-    .logo { font-size: 48px; text-align: center; margin-bottom: 8px; }
-    h1 { font-size: 24px; font-weight: 700; text-align: center; color: #1a1a2e; margin-bottom: 4px; }
-    .sub { font-size: 14px; color: #6b7280; text-align: center; margin-bottom: 28px; }
-    .input-wrap { position: relative; margin-bottom: 14px; }
-    .input-wrap label { font-size: 12px; font-weight: 600; color: #6C5CE7;
-                        text-transform: uppercase; letter-spacing: 0.05em;
-                        display: block; margin-bottom: 6px; }
-    input { width: 100%; padding: 14px 16px; border: 2px solid #f0efff;
+    :root { --bg:#0F0E17; --card:#1C1B29; --p:#7C6FF7; --p2:#a29bfe; --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }
+    body { font-family: -apple-system, sans-serif; min-height: 100vh; min-height: -webkit-fill-available;
+           background: linear-gradient(160deg, #1a1040 0%, #0F0E17 60%, #0a1628 100%);
+           display: flex; align-items: center; justify-content: center;
+           padding: max(20px, env(safe-area-inset-top)) 24px max(20px, env(safe-area-inset-bottom)); }
+    @keyframes up { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px;
+            padding: 40px 28px; width: 100%; max-width: 380px;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.5); animation: up 0.5s ease both; }
+    .logo { font-size: 52px; text-align: center; margin-bottom: 10px; }
+    h1 { font-size: 26px; font-weight: 700; text-align: center; color: var(--text); margin-bottom: 4px; }
+    .sub { font-size: 14px; color: var(--sub); text-align: center; margin-bottom: 32px; }
+    .field { margin-bottom: 18px; }
+    label { font-size: 11px; font-weight: 700; color: var(--p2); text-transform: uppercase;
+            letter-spacing: 0.08em; display: block; margin-bottom: 8px; }
+    input { width: 100%; padding: 15px 16px; border: 1.5px solid var(--border);
             border-radius: 14px; font-size: 16px; outline: none;
-            background: #fafafa; color: #1a1a2e; transition: all 0.2s; }
-    input:focus { border-color: #6C5CE7; background: white; }
+            background: #26253A; color: var(--text); transition: all 0.2s; }
+    input::placeholder { color: var(--sub); }
+    input:focus { border-color: var(--p); background: #2d2c4a; }
     button { width: 100%; padding: 16px; margin-top: 8px;
-             background: linear-gradient(135deg, #6C5CE7, #a29bfe);
+             background: linear-gradient(135deg, var(--p), var(--p2));
              color: white; border: none; border-radius: 14px;
-             font-size: 16px; font-weight: 600; cursor: pointer;
-             transition: transform 0.15s, box-shadow 0.15s;
-             box-shadow: 0 8px 24px rgba(108,92,231,0.3); }
+             font-size: 16px; font-weight: 700; cursor: pointer;
+             box-shadow: 0 8px 30px rgba(124,111,247,0.4);
+             transition: transform 0.15s; }
     button:active { transform: scale(0.97); }
-    .link { text-align: center; margin-top: 20px; font-size: 14px; color: #6b7280; }
-    .link a { color: #6C5CE7; font-weight: 600; text-decoration: none; }
-    #msg { text-align: center; font-size: 13px; margin-top: 12px; min-height: 20px; }
+    .link { text-align: center; margin-top: 22px; font-size: 14px; color: var(--sub); }
+    .link a { color: var(--p2); font-weight: 600; text-decoration: none; }
+    #msg { text-align: center; font-size: 13px; margin-top: 14px; min-height: 18px; }
   </style>
 </head>
 <body>
@@ -45,19 +46,19 @@
     <div class="logo">📚</div>
     <h1>Create Account</h1>
     <div class="sub">Start planning your studies</div>
-    <div class="input-wrap">
+    <div class="field">
       <label>Your Name</label>
       <input type="text" id="name" placeholder="Aaryaman" />
     </div>
-    <div class="input-wrap">
+    <div class="field">
       <label>Email</label>
       <input type="email" id="email" placeholder="you@email.com" />
     </div>
-    <div class="input-wrap">
+    <div class="field">
       <label>Password</label>
       <input type="password" id="password" placeholder="Min 6 characters" />
     </div>
-    <button onclick="signup()">Create Account</button>
+    <button onclick="signup()" id="btn">Create Account</button>
     <div class="link">Already have an account? <a href="login.html">Login</a></div>
     <div id="msg"></div>
   </div>
@@ -72,7 +73,6 @@
       authDomain: "student-planner-ca092.firebaseapp.com",
       projectId: "student-planner-ca092"
     };
-
     const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
@@ -81,21 +81,18 @@
       const email    = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const msg      = document.getElementById("msg");
-      const btn      = document.querySelector("button");
-
-      if (!name) { msg.style.color = "red"; msg.textContent = "Please enter your name"; return; }
-
-      btn.textContent = "Creating account...";
+      const btn      = document.getElementById("btn");
+      if (!name) { msg.style.color = "#FF6B6B"; msg.textContent = "Please enter your name"; return; }
+      btn.textContent = "Creating...";
       try {
         const result = await createUserWithEmailAndPassword(auth, email, password);
-        // ✅ Save name to Firebase profile
         await updateProfile(result.user, { displayName: name });
-        msg.style.color = "#00B894";
-        msg.textContent = "Account created! Redirecting...";
+        msg.style.color = "#00D4A8";
+        msg.textContent = "✓ Account created! Redirecting...";
         setTimeout(() => window.location.href = "login.html", 1200);
       } catch (err) {
-        msg.style.color = "red";
-        msg.textContent = "Error: " + err.message;
+        msg.style.color = "#FF6B6B";
+        msg.textContent = err.message;
         btn.textContent = "Create Account";
       }
     }

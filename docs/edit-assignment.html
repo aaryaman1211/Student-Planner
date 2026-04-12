@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="manifest" href="manifest.json">
-  <title>Add Assignment</title>
+  <title>Edit Assignment</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     :root { --bg:#0F0E17; --card:#1C1B29; --p:#7C6FF7; --p2:#a29bfe; --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }
@@ -17,8 +17,7 @@
               display: flex; align-items: center; gap: 14px; }
     .back { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
             color: white; width: 40px; height: 40px; border-radius: 13px; font-size: 18px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; }
+            cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .header h1 { font-size: 20px; font-weight: 700; color: white; }
     .form { padding: 24px 20px; animation: up 0.4s ease both; }
     .field { margin-bottom: 22px; }
@@ -31,27 +30,40 @@
     input:focus { border-color: var(--p); }
     .save-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--p), var(--p2));
                 color: white; border: none; border-radius: 14px; font-size: 16px;
-                font-weight: 700; cursor: pointer; box-shadow: 0 8px 30px rgba(124,111,247,0.35);
-                transition: transform 0.15s; margin-top: 8px; }
+                font-weight: 700; cursor: pointer; margin-top: 8px;
+                box-shadow: 0 8px 30px rgba(124,111,247,0.35); transition: transform 0.15s; }
     .save-btn:active { transform: scale(0.97); }
-    #msg { text-align: center; font-size: 14px; margin-top: 14px; min-height: 20px; }
+    #msg { text-align: center; font-size: 14px; margin-top: 14px; }
+    .loading { text-align: center; color: var(--sub); padding: 40px; }
   </style>
 </head>
 <body>
   <div class="header">
     <button class="back" onclick="history.back()">←</button>
-    <h1>New Assignment</h1>
+    <h1>Edit Assignment</h1>
   </div>
-  <div class="form">
-    <div class="field"><label>Title</label><input type="text" id="title" placeholder="e.g. Maths HW Chapter 5" /></div>
-    <div class="field"><label>Subject</label><input type="text" id="subject" placeholder="e.g. Mathematics" /></div>
-    <div class="field"><label>Due Date</label><input type="date" id="dueDate" /></div>
-    <button class="save-btn" onclick="save()" id="btn">Save Assignment</button>
-    <div id="msg"></div>
+  <div class="form" id="form">
+    <div class="loading">Loading...</div>
   </div>
   <script>
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) window.location.href = "login.html";
+    const id = new URLSearchParams(window.location.search).get("id");
+    let assignment;
+
+    async function load() {
+      const res = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`);
+      const data = await res.json();
+      assignment = data.find(a => a.id === id);
+      if (!assignment) { window.location.href = "assignments.html"; return; }
+      document.getElementById("form").innerHTML = `
+        <div class="field"><label>Title</label><input type="text" id="title" value="${assignment.title}" /></div>
+        <div class="field"><label>Subject</label><input type="text" id="subject" value="${assignment.subjectName}" /></div>
+        <div class="field"><label>Due Date</label><input type="date" id="dueDate" value="${assignment.dueDate}" /></div>
+        <button class="save-btn" onclick="save()" id="btn">Save Changes</button>
+        <div id="msg"></div>`;
+    }
+
     async function save() {
       const title   = document.getElementById("title").value.trim();
       const subject = document.getElementById("subject").value.trim();
@@ -60,13 +72,15 @@
       const btn = document.getElementById("btn");
       if (!title || !subject || !dueDate) { msg.style.color="#FF6B6B"; msg.textContent="Please fill all fields"; return; }
       btn.textContent = "Saving...";
-      const res = await fetch("https://web-production-dc086.up.railway.app/assignments", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, subjectName: subject, dueDate, userId: user.uid })
+      const updated = { ...assignment, title, subjectName: subject, dueDate };
+      const res = await fetch(`https://web-production-dc086.up.railway.app/assignments/${id}/update`, {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated)
       });
-      if (res.ok) { msg.style.color="#00D4A8"; msg.textContent="✓ Saved!"; setTimeout(() => window.location.href="assignments.html", 800); }
-      else { msg.style.color="#FF6B6B"; msg.textContent="Something went wrong"; btn.textContent="Save Assignment"; }
+      if (res.ok) { msg.style.color="#00D4A8"; msg.textContent="✓ Updated!"; setTimeout(() => window.location.href="assignments.html", 800); }
+      else { msg.style.color="#FF6B6B"; msg.textContent="Something went wrong"; btn.textContent="Save Changes"; }
     }
+    load();
   </script>
 </body>
 </html>

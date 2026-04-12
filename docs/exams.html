@@ -2,61 +2,69 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <link rel="manifest" href="manifest.json">
   <title>Exams</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root { --t: #00B894; --bg: #F0EFFA; --text: #1a1a2e; --sub: #6b7280; }
-    body { font-family: -apple-system, sans-serif; background: var(--bg);
-           color: var(--text); padding-bottom: 90px; }
-    @keyframes up { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    :root { --bg:#0F0E17; --card:#1C1B29; --card2:#26253A; --t:#00D4A8; --t2:#55efc4;
+            --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; --p:#7C6FF7; --p2:#a29bfe; }
+    body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text);
+           padding-bottom: max(90px, calc(70px + env(safe-area-inset-bottom))); }
+    @keyframes up { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
     .a1 { animation: up .35s ease both; }
-    .a2 { animation: up .35s .06s ease both; }
+    .a2 { animation: up .35s .07s ease both; }
 
-    .header { background: white; padding: 56px 20px 20px;
-              box-shadow: 0 2px 12px rgba(0,184,148,0.08); }
+    .header { background: var(--card); border-bottom: 1px solid var(--border);
+              padding: max(52px, calc(34px + env(safe-area-inset-top))) 20px 18px; }
     .header-row { display: flex; justify-content: space-between; align-items: center; }
-    h1 { font-size: 24px; font-weight: 700; }
-    .add-btn { background: linear-gradient(135deg, #00B894, #55efc4);
-               color: white; border: none; padding: 10px 18px;
-               border-radius: 20px; font-size: 14px; font-weight: 600;
-               cursor: pointer; text-decoration: none; display: inline-block;
-               box-shadow: 0 4px 12px rgba(0,184,148,0.3);
-               transition: transform 0.15s; }
-    .add-btn:active { transform: scale(0.95); }
+    h1 { font-size: 24px; font-weight: 800; }
+    .add-btn { background: linear-gradient(135deg, var(--t), var(--t2)); color: #0a2e26;
+               border: none; padding: 10px 20px; border-radius: 20px; font-size: 14px;
+               font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block;
+               box-shadow: 0 4px 15px rgba(0,212,168,0.3); transition: transform 0.15s; }
+    .add-btn:active { transform: scale(0.94); }
 
-    .content { padding: 20px; }
-
-    .card { background: white; border-radius: 16px; padding: 18px;
-            margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            cursor: pointer; transition: transform 0.15s; }
-    .card:active { transform: scale(0.98); }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .title   { font-size: 16px; font-weight: 600; }
+    .content { padding: 18px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 18px; margin-bottom: 12px; transition: background 0.15s; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .title   { font-size: 16px; font-weight: 600; cursor: pointer; }
     .subject { font-size: 13px; color: var(--sub); margin-top: 3px; }
-    .date    { font-size: 12px; color: var(--t); margin-top: 3px; font-weight: 600; }
-    .prog-wrap { margin-top: 12px; }
-    .prog-bar { background: #e0e0e0; border-radius: 6px; height: 6px; overflow: hidden; }
+    .date    { font-size: 12px; color: var(--t); margin-top: 4px; font-weight: 600; }
+    .right-col { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+    .days-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+                  background: rgba(0,212,168,0.15); color: var(--t); white-space: nowrap; }
+    .card-actions { display: flex; gap: 6px; }
+    .edit-btn { background: rgba(124,111,247,0.15); border: none; padding: 7px 10px;
+                border-radius: 10px; font-size: 13px; cursor: pointer;
+                color: var(--p2); transition: transform 0.15s; }
+    .del-btn  { background: rgba(255,107,107,0.15); border: none; padding: 7px 10px;
+                border-radius: 10px; font-size: 13px; cursor: pointer;
+                color: #FF6B6B; transition: transform 0.15s; }
+    .edit-btn:active, .del-btn:active { transform: scale(0.9); }
+    .prog-wrap { margin-top: 14px; }
+    .prog-bar  { background: var(--card2); border-radius: 6px; height: 6px; overflow: hidden; }
     .prog-fill { height: 6px; border-radius: 6px;
-                 background: linear-gradient(90deg, #00B894, #55efc4);
+                 background: linear-gradient(90deg, var(--t), var(--t2));
                  transition: width 0.6s ease; }
-    .prog-text { font-size: 12px; color: var(--sub); margin-top: 5px; }
-    .days-left { font-size: 12px; font-weight: 600; color: white;
-                 background: var(--t); padding: 4px 10px; border-radius: 20px; }
+    .prog-text { font-size: 12px; color: var(--sub); margin-top: 6px; }
     .empty { text-align: center; color: var(--sub); padding: 60px 0; font-size: 15px; }
-    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-icon { font-size: 44px; margin-bottom: 12px; }
 
-    .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: white;
-            border-top: 1px solid #f0efff; padding: 10px 0 24px;
-            display: flex; z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,0.06); }
+    .bnav { position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(20,19,34,0.95); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border);
+            padding: 10px 0 max(20px, env(safe-area-inset-bottom));
+            display: flex; z-index: 100; }
     .bnav a { flex: 1; display: flex; flex-direction: column; align-items: center;
-              text-decoration: none; gap: 3px; transition: transform 0.15s; }
-    .bnav a:active { transform: scale(0.92); }
-    .bnav-icon { font-size: 22px; }
-    .bnav-label { font-size: 11px; font-weight: 500; color: #6b7280; }
-    .bnav a.active .bnav-label { color: #6C5CE7; }
+              text-decoration: none; gap: 3px; }
+    .bnav a:active { transform: scale(0.88); }
+    .bnav-icon  { font-size: 22px; }
+    .bnav-label { font-size: 10px; font-weight: 600; color: var(--sub); }
+    .bnav a.active .bnav-label { color: var(--p2); }
   </style>
 </head>
 <body>
@@ -70,18 +78,10 @@
   <div class="content a2" id="list"></div>
 
   <nav class="bnav">
-    <a href="dashboard.html">
-      <span class="bnav-icon">🏠</span>
-      <span class="bnav-label">Home</span>
-    </a>
-    <a href="assignments.html">
-      <span class="bnav-icon">📝</span>
-      <span class="bnav-label">Tasks</span>
-    </a>
-    <a href="exams.html" class="active">
-      <span class="bnav-icon">📅</span>
-      <span class="bnav-label">Exams</span>
-    </a>
+    <a href="dashboard.html"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span></a>
+    <a href="assignments.html"><span class="bnav-icon">📝</span><span class="bnav-label">Tasks</span></a>
+    <a href="exams.html" class="active"><span class="bnav-icon">📅</span><span class="bnav-label">Exams</span></a>
+    <a href="account.html"><span class="bnav-icon">👤</span><span class="bnav-label">Account</span></a>
   </nav>
 
   <script>
@@ -94,7 +94,7 @@
       const list = document.getElementById("list");
       list.innerHTML = "";
       if (!data.length) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No exams yet<br><small>Tap + Add to get started</small></div>';
+        list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No exams yet<br><small style="font-size:13px;margin-top:6px;display:block">Tap + Add to get started</small></div>';
         return;
       }
       data.sort((a, b) => new Date(a.examDate) - new Date(b.examDate));
@@ -105,15 +105,20 @@
         const daysLeft = Math.ceil((new Date(e.examDate) - new Date()) / 86400000);
         const daysStr  = daysLeft > 0 ? daysLeft + "d left" : daysLeft === 0 ? "Today!" : "Past";
         list.innerHTML += `
-          <div class="card" style="animation: up .35s ${i*0.06}s ease both"
-               onclick="window.location.href='exam-detail.html?id=${e.id}'">
+          <div class="card" style="animation: up .35s ${i*0.06}s ease both">
             <div class="card-top">
-              <div>
+              <div style="cursor:pointer;flex:1" onclick="window.location.href='exam-detail.html?id=${e.id}'">
                 <div class="title">${e.title}</div>
                 <div class="subject">${e.subjectName}</div>
                 <div class="date">📅 ${e.examDate}</div>
               </div>
-              <span class="days-left">${daysStr}</span>
+              <div class="right-col">
+                <span class="days-badge">${daysStr}</span>
+                <div class="card-actions">
+                  <button class="edit-btn" onclick="window.location.href='exam-detail.html?id=${e.id}&edit=1'">✏️</button>
+                  <button class="del-btn"  onclick="del('${e.id}')">🗑</button>
+                </div>
+              </div>
             </div>
             ${total > 0 ? `
             <div class="prog-wrap">
@@ -122,6 +127,12 @@
             </div>` : ''}
           </div>`;
       });
+    }
+
+    async function del(id) {
+      if (!confirm("Delete this exam?")) return;
+      await fetch(`https://web-production-dc086.up.railway.app/exams/${id}`, { method: "DELETE" });
+      load();
     }
     load();
   </script>
