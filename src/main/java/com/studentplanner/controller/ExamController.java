@@ -62,4 +62,13 @@ public class ExamController {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{id}/update")
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody Exam exam) {
+        try {
+            return ResponseEntity.ok(examService.updateExam(id, exam));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
 }

@@ -40,4 +40,11 @@ public class AssignmentService {
         Firestore db = FirestoreClient.getFirestore();
         db.collection(COLLECTION).document(id).delete().get();
     }
+    
+    public Assignment updateAssignment(String id, Assignment updated) throws Exception {
+        Firestore db = FirestoreClient.getFirestore();
+        updated.setId(id);
+        db.collection(COLLECTION).document(id).set(updated).get();
+        return updated;
+    }
 }

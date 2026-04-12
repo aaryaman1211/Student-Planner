@@ -54,4 +54,11 @@ public class ExamService {
         Firestore db = FirestoreClient.getFirestore();
         db.collection(COLLECTION).document(id).delete().get();
     }
+    
+    public Exam updateExam(String id, Exam updated) throws Exception {
+        Firestore db = FirestoreClient.getFirestore();
+        updated.setId(id);
+        db.collection(COLLECTION).document(id).set(updated).get();
+        return updated;
+    }
 }

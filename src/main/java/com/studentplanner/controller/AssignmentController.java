@@ -53,4 +53,13 @@ public class AssignmentController {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{id}/update")
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody Assignment assignment) {
+        try {
+            return ResponseEntity.ok(assignmentService.updateAssignment(id, assignment));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
 }
