@@ -124,6 +124,29 @@
                   text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
     .bnav a.active .bnav-icon  { filter: grayscale(0%) opacity(1); transform: translateY(-2px); }
     .bnav a.active .bnav-label { color: var(--p2); }
+
+    /* New assignments banner */
+.new-assign-banner { background: rgba(66,133,244,0.12); border: 1px solid rgba(66,133,244,0.3);
+                     border-radius: 16px; padding: 16px; margin-bottom: 20px;
+                     display: none; }
+.new-assign-title  { font-size: 15px; font-weight: 700; color: #7AB4F5; margin-bottom: 8px; }
+.new-assign-item   { background: rgba(255,255,255,0.05); border-radius: 10px;
+                     padding: 10px 12px; margin-bottom: 6px;
+                     display: flex; align-items: center; gap: 10px; }
+.new-assign-item input[type="checkbox"] { width: 18px; height: 18px;
+                                          accent-color: #4285F4; flex-shrink: 0; cursor: pointer; }
+.new-assign-name   { font-size: 13px; font-weight: 600; flex: 1; }
+.new-assign-course { font-size: 12px; color: var(--sub); }
+.new-assign-due    { font-size: 11px; color: var(--p2); font-weight: 500; margin-top: 2px; }
+.new-assign-btns   { display: flex; gap: 8px; margin-top: 10px; }
+.import-new-btn    { flex: 1; padding: 11px; background: linear-gradient(135deg, #4285F4, #34A853);
+                     color: white; border: none; border-radius: 12px;
+                     font-size: 14px; font-weight: 700; cursor: pointer;
+                     transition: transform 0.15s; }
+.import-new-btn:active { transform: scale(0.97); }
+.dismiss-btn       { padding: 11px 16px; background: rgba(255,255,255,0.06);
+                     border: 1px solid var(--border); color: var(--sub); border-radius: 12px;
+                     font-size: 14px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -163,6 +186,16 @@
         <span class="sync-arrow">→</span>
       </a>
     </div>
+
+    <!-- Auto-sync new assignments banner -->
+<div id="new-assignments-banner" class="new-assign-banner a3">
+  <div class="new-assign-title">🎓 New assignments found in Classroom</div>
+  <div id="new-assign-list"></div>
+  <div class="new-assign-btns">
+    <button class="import-new-btn" onclick="importNewAssignments()">Import Selected</button>
+    <button class="dismiss-btn"    onclick="dismissNewAssignments()">Dismiss</button>
+  </div>
+</div>
 
     <!-- Notification Banner -->
     <div id="notif-banner" class="notif a3"></div>
@@ -255,6 +288,141 @@
       } catch(e) { console.error(e); }
     }
 
+    // Auto-sync from Classroom on every dashboard open
+async function autoSyncClassroom() {
+  const token     = localStorage.getItem("classroomToken");
+  const tokenTime = localStorage.getItem("classroomTokenTime");
+  if (!token || !tokenTime) return;
+
+  // Token expires after 1 hour
+  const age = Date.now() - parseInt(tokenTime);
+  if (age > 55 * 60 * 1000) {
+    localStorage.removeItem("classroomToken");
+    localStorage.removeItem("classroomTokenTime");
+    return;
+  }
+
+  try {
+    // Fetch courses
+    const cRes    = await fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE", {
+      headers: { Authorization: "Bearer " + token }
+    });
+    const cData   = await cRes.json();
+    if (!cData.courses) return;
+
+    // Fetch all assignments
+    const today = new Date(); today.setHours(0,0,0,0);
+    const allWork = [];
+    for (const course of cData.courses) {
+      try {
+        const wRes  = await fetch(`https://classroom.googleapis.com/v1/courses/${course.id}/courseWork`, {
+          headers: { Authorization: "Bearer " + token }
+        });
+        const wData = await wRes.json();
+        for (const a of (wData.courseWork || [])) {
+          let dueDate = null;
+          if (a.dueDate) {
+            const m = String(a.dueDate.month).padStart(2, "0");
+            const d = String(a.dueDate.day).padStart(2, "0");
+            dueDate = `${a.dueDate.year}-${m}-${d}`;
+          }
+          // Only future or no due date
+          if (!dueDate || new Date(dueDate) >= today) {
+            allWork.push({ title: a.title, course: course.name, dueDate });
+          }
+        }
+      } catch(e) {}
+    }
+
+    // Compare with already imported assignments
+    const aRes      = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`);
+    const existing  = await aRes.json();
+    const existingTitles = new Set(existing.map(a => a.title.toLowerCase().trim()));
+
+    // Find genuinely new ones
+    const dismissed  = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
+    const newOnes    = allWork.filter(a =>
+      !existingTitles.has(a.title.toLowerCase().trim()) &&
+      !dismissed.includes(a.title.toLowerCase().trim())
+    );
+
+    if (!newOnes.length) return;
+
+    // Show banner
+    const banner = document.getElementById("new-assignments-banner");
+    const list   = document.getElementById("new-assign-list");
+    banner.style.display = "block";
+    list.innerHTML = "";
+
+    newOnes.forEach((a, i) => {
+      list.innerHTML += `
+        <div class="new-assign-item">
+          <input type="checkbox" id="nw_${i}" checked />
+          <div style="flex:1">
+            <div class="new-assign-name">${a.title}</div>
+            <div class="new-assign-course">${a.course}</div>
+            ${a.dueDate
+              ? `<div class="new-assign-due">Due: ${a.dueDate}</div>`
+              : `<div class="new-assign-due" style="color:#FF6B6B">No due date</div>`}
+          </div>
+        </div>`;
+    });
+
+    // Store for import
+    window._newAssignments = newOnes;
+
+  } catch(e) { console.error("Auto-sync error:", e); }
+}
+
+async function importNewAssignments() {
+  const checkboxes = document.querySelectorAll("[id^='nw_']");
+  const today      = new Date(); today.setDate(today.getDate() + 7);
+  const defaultDate = today.toISOString().split("T")[0];
+  let imported = 0;
+
+  for (let i = 0; i < checkboxes.length; i++) {
+    if (!checkboxes[i].checked) continue;
+    const a = window._newAssignments[i];
+    try {
+      await fetch("https://web-production-dc086.up.railway.app/assignments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title:       a.title,
+          subjectName: a.course,
+          dueDate:     a.dueDate || defaultDate,
+          userId:      user.uid
+        })
+      });
+      imported++;
+    } catch(e) {}
+  }
+
+  document.getElementById("new-assignments-banner").style.display = "none";
+  if (imported > 0) {
+    // Reload to show new assignments
+    load();
+    // Show quick toast
+    const toast = document.createElement("div");
+    toast.textContent = `✓ ${imported} assignment${imported > 1 ? "s" : ""} imported!`;
+    toast.style.cssText = `position:fixed;bottom:100px;left:50%;transform:translateX(-50%);
+      background:#00D4A8;color:#001a14;padding:10px 20px;border-radius:20px;
+      font-size:14px;font-weight:700;z-index:999;animation:fadeUp 0.3s ease both`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+  }
+}
+
+function dismissNewAssignments() {
+  // Remember dismissed so we don't show them again
+  const dismissed = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
+  (window._newAssignments || []).forEach(a => {
+    dismissed.push(a.title.toLowerCase().trim());
+  });
+  localStorage.setItem("dismissedAssignments", JSON.stringify(dismissed));
+  document.getElementById("new-assignments-banner").style.display = "none";
+}
+
     function renderList(id, items) {
       const div = document.getElementById(id);
       div.innerHTML = "";
@@ -281,6 +449,7 @@
     }
 
     load();
+    autoSyncClassroom(); // check for new classroom assignments
   </script>
 </body>
 </html>

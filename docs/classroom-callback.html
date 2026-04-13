@@ -111,16 +111,14 @@
 
       const content = document.getElementById("content");
 
-      // Filter to only show upcoming or recent assignments
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      const cutoff = new Date(today);
-      cutoff.setDate(cutoff.getDate() - 14); // show up to 2 weeks old
+      // Only show future assignments or ones with no due date
+        const today = new Date();
+        today.setHours(0,0,0,0);
 
-      const filtered = assignments.filter(a => {
-        if (!a.dueDate) return true; // show no-due-date ones too
-        return new Date(a.dueDate) >= cutoff;
-      });
+        const filtered = assignments.filter(a => {
+            if (!a.dueDate) return true; // always show no due date
+            return new Date(a.dueDate) >= today; // only future
+        });
 
       if (!filtered.length) {
         content.innerHTML = '<p style="text-align:center;color:var(--sub);padding:20px 0">No upcoming assignments found</p>';
@@ -271,6 +269,12 @@
         document.getElementById("subtitle").textContent = err.message;
         console.error(err);
       }
+    }
+
+    if (accessToken) {
+        // Save token and timestamp for auto-sync
+        localStorage.setItem("classroomToken", accessToken);
+        localStorage.setItem("classroomTokenTime", Date.now().toString());
     }
 
     init();
