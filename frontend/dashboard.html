@@ -10,74 +10,97 @@
   <title>Dashboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root { --bg:#0F0E17; --card:#1C1B29; --card2:#26253A; --p:#7C6FF7; --p2:#a29bfe;
-            --t:#00D4A8; --t2:#55efc4; --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }
-    body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text);
-           padding-bottom: max(90px, calc(70px + env(safe-area-inset-bottom))); }
-    @keyframes up   { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes fade { from { opacity:0; } to { opacity:1; } }
-    .a1 { animation: up .4s ease both; }
-    .a2 { animation: up .4s .07s ease both; }
-    .a3 { animation: up .4s .14s ease both; }
-    .a4 { animation: up .4s .21s ease both; }
+    :root { 
+      --bg:#0F0E17; --card:#1C1B29; --card-hover:#222133; --card2:#26253A; 
+      --p:#7C6FF7; --p2:#a29bfe; --t:#00D4A8; --t2:#55efc4; 
+      --text:#FFFFFE; --sub:#A7A9BE; --border:rgba(255,255,255,0.08); 
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           background: var(--bg); color: var(--text);
+           padding-bottom: max(90px, calc(70px + env(safe-area-inset-bottom))); 
+           overflow-x: hidden; }
+           
+    /* Fluid Animations */
+    @keyframes fadeUp { 
+      from { opacity: 0; transform: translateY(24px) scale(0.98); } 
+      to { opacity: 1; transform: translateY(0) scale(1); } 
+    }
+    @keyframes glowPulse {
+      0% { box-shadow: 0 0 20px rgba(124,111,247,0.2); }
+      50% { box-shadow: 0 0 40px rgba(124,111,247,0.4); }
+      100% { box-shadow: 0 0 20px rgba(124,111,247,0.2); }
+    }
 
-    .header { background: linear-gradient(135deg, #1a1040 0%, #241b5e 100%);
+    .a1 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .a2 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
+    .a3 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
+    .a4 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
+
+    /* Header Enhancement */
+    .header { background: radial-gradient(circle at top right, #2a1b6e, #130c29);
               padding: max(56px, calc(36px + env(safe-area-inset-top))) 22px 72px;
-              position: relative; overflow: hidden; }
-    .header::before { content: ''; position: absolute; top: -60px; right: -60px;
-                      width: 200px; height: 200px; background: rgba(124,111,247,0.15);
-                      border-radius: 50%; }
+              position: relative; overflow: visible; border-bottom: 1px solid var(--border); }
+    .header::before { content: ''; position: absolute; top: -50px; right: -50px;
+                      width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,111,247,0.3) 0%, transparent 70%);
+                      border-radius: 50%; filter: blur(20px); z-index: 0; }
     .header::after { content: ''; position: absolute; bottom: -40px; left: 0; right: 0;
-                     height: 80px; background: var(--bg); border-radius: 40px 40px 0 0; }
+                     height: 80px; background: var(--bg); border-radius: 40px 40px 0 0; z-index: 1; }
     .header-top { display: flex; justify-content: space-between; align-items: flex-start;
-                  position: relative; z-index: 1; }
-    .greeting { font-size: 27px; font-weight: 800; color: white; }
-    .greeting-sub { font-size: 14px; color: rgba(255,255,255,0.6); margin-top: 4px; }
-    .avatar { width: 42px; height: 42px; background: linear-gradient(135deg, var(--p), var(--p2));
-              border-radius: 14px; display: flex; align-items: center; justify-content: center;
+                  position: relative; z-index: 2; }
+    .greeting { font-size: 28px; font-weight: 800; color: white; letter-spacing: -0.5px; }
+    .greeting-sub { font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 6px; font-weight: 500; }
+    .avatar { width: 46px; height: 46px; background: linear-gradient(135deg, var(--p), var(--p2));
+              border-radius: 16px; display: flex; align-items: center; justify-content: center;
               font-size: 18px; font-weight: 700; color: white; cursor: pointer;
-              flex-shrink: 0; text-decoration: none; }
+              flex-shrink: 0; text-decoration: none; box-shadow: 0 8px 20px rgba(124,111,247,0.3);
+              transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .avatar:active { transform: scale(0.9); }
 
-    .stats { display: flex; gap: 12px; padding: 0 18px; margin-top: -22px;
-             position: relative; z-index: 1; }
-    .stat { flex: 1; background: var(--card); border: 1px solid var(--border);
-            border-radius: 18px; padding: 16px 12px; text-align: center;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
-    .stat-num { font-size: 30px; font-weight: 800; color: var(--p); }
-    .stat-label { font-size: 12px; color: var(--sub); margin-top: 3px; }
+    /* Floating Stats Cards */
+    .stats { display: flex; gap: 14px; padding: 0 18px; margin-top: -30px;
+             position: relative; z-index: 3; }
+    .stat { flex: 1; background: rgba(28, 27, 41, 0.85); backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 20px 14px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: transform 0.3s ease; }
+    .stat:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); }
+    .stat-num { font-size: 34px; font-weight: 800; background: linear-gradient(135deg, var(--p2), var(--p));
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sub); margin-top: 6px; }
 
-    .content { padding: 18px; }
-    .section-title { font-size: 17px; font-weight: 700; color: var(--text);
-                     margin-bottom: 12px; }
-    .notif { background: #2a1f00; border: 1px solid #5a3e00; border-radius: 14px;
-             padding: 14px 16px; margin-bottom: 20px; font-size: 14px;
-             color: #FFD97D; line-height: 1.6; display: none; }
+    .content { padding: 24px 18px; }
+    .section-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .notif { background: rgba(255, 217, 125, 0.1); border: 1px solid rgba(255, 217, 125, 0.2); border-radius: 16px;
+             padding: 16px; margin-bottom: 24px; font-size: 14px; color: #FFD97D; line-height: 1.6; display: none; }
 
-    .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-                 padding: 16px; margin-bottom: 10px;
+    /* Interactive List Items */
+    .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+                 padding: 18px; margin-bottom: 12px;
                  display: flex; justify-content: space-between; align-items: center;
-                 cursor: pointer; transition: transform 0.15s, background 0.15s; }
-    .item-card:active { transform: scale(0.98); background: var(--card2); }
-    .item-title { font-size: 15px; font-weight: 600; color: var(--text); }
-    .item-sub   { font-size: 13px; color: var(--sub); margin-top: 3px; }
-    .item-date  { font-size: 12px; color: var(--sub); margin-top: 3px; }
-    .badge { font-size: 11px; font-weight: 700; padding: 5px 12px;
-             border-radius: 20px; white-space: nowrap; }
-    .badge.assignment { background: rgba(124,111,247,0.2); color: var(--p2); }
-    .badge.exam       { background: rgba(0,212,168,0.15); color: var(--t); }
-    .empty { text-align: center; color: var(--sub); padding: 24px 0; font-size: 14px; }
+                 cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .item-card:hover { transform: translateY(-2px); background: var(--card-hover); border-color: rgba(255,255,255,0.15); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+    .item-card:active { transform: scale(0.97); }
+    .item-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .item-sub   { font-size: 13px; color: var(--sub); }
+    .item-date  { font-size: 12px; color: var(--sub); margin-top: 6px; display: flex; align-items: center; gap: 4px;}
+    
+    .badge { font-size: 11px; font-weight: 700; padding: 6px 14px;
+             border-radius: 20px; white-space: nowrap; letter-spacing: 0.5px; }
+    .badge.assignment { background: rgba(124,111,247,0.15); color: var(--p2); border: 1px solid rgba(124,111,247,0.3); }
+    .badge.exam       { background: rgba(0,212,168,0.15); color: var(--t); border: 1px solid rgba(0,212,168,0.3); }
+    .empty { text-align: center; color: var(--sub); padding: 30px 0; font-size: 14px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed var(--border); }
 
+    /* Glass Bottom Nav */
     .bnav { position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(20,19,34,0.95); backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border);
-            padding: 10px 0 max(20px, env(safe-area-inset-bottom));
-            display: flex; z-index: 100; }
+            background: rgba(20,19,34,0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255,255,255,0.08); padding: 12px 0 max(20px, env(safe-area-inset-bottom));
+            display: flex; z-index: 100; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); }
     .bnav a { flex: 1; display: flex; flex-direction: column; align-items: center;
-              text-decoration: none; gap: 3px; transition: transform 0.15s; }
-    .bnav a:active { transform: scale(0.88); }
-    .bnav-icon  { font-size: 22px; }
-    .bnav-label { font-size: 10px; font-weight: 600; color: var(--sub); }
+              text-decoration: none; gap: 5px; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .bnav a:active { transform: scale(0.85); }
+    .bnav-icon  { font-size: 22px; filter: grayscale(100%) opacity(0.6); transition: all 0.3s ease; }
+    .bnav-label { font-size: 10px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
+    .bnav a.active .bnav-icon { filter: grayscale(0%) opacity(1); transform: translateY(-2px); }
     .bnav a.active .bnav-label { color: var(--p2); }
   </style>
 </head>
@@ -86,7 +109,7 @@
     <div class="header-top">
       <div>
         <div class="greeting" id="greeting">Hello 👋</div>
-        <div class="greeting-sub">Your planner</div>
+        <div class="greeting-sub">Your planner overview</div>
       </div>
       <a href="account.html" class="avatar" id="avatar">A</a>
     </div>
@@ -106,11 +129,11 @@
   <div class="content">
     <div id="notif-banner" class="notif a3"></div>
     <div class="a3">
-      <div class="section-title">⏰ Next 7 days</div>
+      <div class="section-title"><span>⏰</span> Next 7 days</div>
       <div id="upcoming"></div>
     </div>
-    <div class="a4" style="margin-top:20px">
-      <div class="section-title">📋 Later</div>
+    <div class="a4" style="margin-top:28px">
+      <div class="section-title"><span>📋</span> Later</div>
       <div id="later"></div>
     </div>
   </div>
@@ -131,13 +154,14 @@
   </nav>
 
   <script>
+    // Existing Dashboard JS...
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) window.location.href = "login.html";
 
     const hour = new Date().getHours();
     const greet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
     const name = user.name || "Student";
-    document.getElementById("greeting").textContent = greet + ", " + name.split(" ")[0] + " 👋";
+    document.getElementById("greeting").textContent = greet + ", " + name.split(" ")[0];
     document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
 
     async function load() {
@@ -191,14 +215,14 @@
       const div = document.getElementById(id);
       div.innerHTML = "";
       if (!items.length) { div.innerHTML = '<div class="empty">Nothing here 🎉</div>'; return; }
-      items.forEach(item => {
+      items.forEach((item, index) => {
         const link = item.type === "exam" ? `exam-detail.html?id=${item.id}` : "assignments.html";
         div.innerHTML += `
-          <div class="item-card" onclick="window.location.href='${link}'">
+          <div class="item-card" onclick="window.location.href='${link}'" style="animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.05}s both">
             <div>
               <div class="item-title">${item.title}</div>
               <div class="item-sub">${item.sub}</div>
-              <div class="item-date">${item.date}</div>
+              <div class="item-date">⏳ ${item.date}</div>
             </div>
             <span class="badge ${item.type}">${item.type === "exam" ? "Exam" : "Task"}</span>
           </div>`;
