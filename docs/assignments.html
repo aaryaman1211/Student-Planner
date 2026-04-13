@@ -9,60 +9,63 @@
   <title>Assignments</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root { --bg:#0F0E17; --card:#1C1B29; --card2:#26253A; --p:#7C6FF7; --p2:#a29bfe;
-            --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }
-    body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text);
-           padding-bottom: max(90px, calc(70px + env(safe-area-inset-bottom))); }
-    @keyframes up { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-    .a1 { animation: up .35s ease both; }
-    .a2 { animation: up .35s .07s ease both; }
+    :root { --bg:#0F0E17; --card:#1C1B29; --card-hover:#222133; --p:#7C6FF7; --p2:#a29bfe;
+            --text:#FFFFFE; --sub:#A7A9BE; --border:rgba(255,255,255,0.08); }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text);
+           padding-bottom: max(100px, calc(80px + env(safe-area-inset-bottom))); }
+           
+    @keyframes fadeUp { from { opacity:0; transform:translateY(24px) scale(0.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+    .a1 { animation: fadeUp .6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .a2 { animation: fadeUp .6s cubic-bezier(0.16, 1, 0.3, 1) .1s both; }
 
-    .header { background: var(--card); border-bottom: 1px solid var(--border);
-              padding: max(52px, calc(34px + env(safe-area-inset-top))) 20px 18px; }
+    .header { background: radial-gradient(circle at top right, #2a1b6e, #130c29);
+              padding: max(56px, calc(36px + env(safe-area-inset-top))) 24px 24px; border-bottom: 1px solid var(--border);
+              position: sticky; top: 0; z-index: 10; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     .header-row { display: flex; justify-content: space-between; align-items: center; }
-    h1 { font-size: 24px; font-weight: 800; }
+    h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
     .add-btn { background: linear-gradient(135deg, var(--p), var(--p2)); color: white;
-               border: none; padding: 10px 20px; border-radius: 20px; font-size: 14px;
+               border: none; padding: 12px 24px; border-radius: 24px; font-size: 15px;
                font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block;
-               box-shadow: 0 4px 15px rgba(124,111,247,0.4); transition: transform 0.15s; }
-    .add-btn:active { transform: scale(0.94); }
+               box-shadow: 0 8px 20px rgba(124,111,247,0.4); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .add-btn:active { transform: scale(0.92); }
 
-    .content { padding: 18px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-            padding: 16px 18px; margin-bottom: 10px; transition: background 0.15s; }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-    .title   { font-size: 15px; font-weight: 600; color: var(--text); }
-    .subject { font-size: 13px; color: var(--sub); margin-top: 3px; }
-    .due     { font-size: 12px; color: var(--p2); margin-top: 3px; font-weight: 600; }
+    .content { padding: 20px 18px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+            padding: 20px; margin-bottom: 14px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .card:hover { transform: translateY(-3px); background: var(--card-hover); border-color: rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .title   { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; margin-bottom: 4px; transition: color 0.3s; }
+    .subject { font-size: 14px; color: var(--sub); font-weight: 500; }
+    .due     { font-size: 13px; color: var(--p2); margin-top: 8px; font-weight: 700; display: inline-block; background: rgba(124,111,247,0.1); padding: 4px 10px; border-radius: 12px; }
     .done-text { text-decoration: line-through; color: var(--sub); }
-    .actions { display: flex; gap: 6px; flex-shrink: 0; }
-    .tick-btn { background: rgba(0,212,168,0.15); border: none; padding: 8px 12px;
-                border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;
-                color: #00D4A8; transition: transform 0.15s; }
-    .tick-btn:active { transform: scale(0.9); }
-    .edit-btn { background: rgba(124,111,247,0.15); border: none; padding: 8px 10px;
-                border-radius: 10px; font-size: 14px; cursor: pointer;
-                color: var(--p2); transition: transform 0.15s; }
-    .edit-btn:active { transform: scale(0.9); }
-    .del-btn  { background: rgba(255,107,107,0.15); border: none; padding: 8px 10px;
-                border-radius: 10px; font-size: 14px; cursor: pointer;
-                color: #FF6B6B; transition: transform 0.15s; }
-    .del-btn:active { transform: scale(0.9); }
-    .done-badge { background: rgba(0,212,168,0.15); color: #00D4A8; font-size: 11px;
-                  font-weight: 700; padding: 5px 10px; border-radius: 20px; }
+    
+    .actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
+    .tick-btn { background: rgba(0,212,168,0.15); border: 1px solid rgba(0,212,168,0.3); padding: 10px 16px;
+                border-radius: 16px; font-size: 13px; font-weight: 800; cursor: pointer;
+                color: #00D4A8; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .tick-btn:active { transform: scale(0.9); background: rgba(0,212,168,0.3); }
+    .icon-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 38px; height: 38px;
+                border-radius: 12px; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+                transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .icon-btn.edit { color: var(--p2); }
+    .icon-btn.del  { color: #FF6B6B; background: rgba(255,107,107,0.05); border-color: rgba(255,107,107,0.2); }
+    .icon-btn:active { transform: scale(0.9); }
+    
+    .done-badge { background: rgba(0,212,168,0.15); color: #00D4A8; font-size: 13px;
+                  font-weight: 800; padding: 10px 16px; border-radius: 16px; border: 1px solid rgba(0,212,168,0.3); }
     .empty { text-align: center; color: var(--sub); padding: 60px 0; font-size: 15px; }
-    .empty-icon { font-size: 44px; margin-bottom: 12px; }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.8; }
 
+    /* Glass Bottom Nav */
     .bnav { position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(20,19,34,0.95); backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border);
-            padding: 10px 0 max(20px, env(safe-area-inset-bottom));
-            display: flex; z-index: 100; }
-    .bnav a { flex: 1; display: flex; flex-direction: column; align-items: center;
-              text-decoration: none; gap: 3px; }
-    .bnav a:active { transform: scale(0.88); }
-    .bnav-icon  { font-size: 22px; }
-    .bnav-label { font-size: 10px; font-weight: 600; color: var(--sub); }
+            background: rgba(20,19,34,0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255,255,255,0.08); padding: 12px 0 max(20px, env(safe-area-inset-bottom));
+            display: flex; z-index: 100; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); }
+    .bnav a { flex: 1; display: flex; flex-direction: column; align-items: center; text-decoration: none; gap: 5px; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .bnav a:active { transform: scale(0.85); }
+    .bnav-icon  { font-size: 22px; filter: grayscale(100%) opacity(0.6); transition: all 0.3s ease; }
+    .bnav-label { font-size: 10px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
+    .bnav a.active .bnav-icon { filter: grayscale(0%) opacity(1); transform: translateY(-2px); }
     .bnav a.active .bnav-label { color: var(--p2); }
   </style>
 </head>
@@ -93,7 +96,7 @@
       const list = document.getElementById("list");
       list.innerHTML = "";
       if (!data.length) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No assignments yet<br><small style="font-size:13px;margin-top:6px;display:block">Tap + Add to get started</small></div>';
+        list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No assignments yet<br><small style="font-size:14px;margin-top:8px;display:block">Tap + Add to get started</small></div>';
         return;
       }
       data.sort((a, b) => {
@@ -102,19 +105,19 @@
       });
       data.forEach((a, i) => {
         list.innerHTML += `
-          <div class="card" style="animation: up .35s ${i*0.05}s ease both">
+          <div class="card" style="animation: fadeUp .6s cubic-bezier(0.16, 1, 0.3, 1) ${i*0.06}s both">
             <div class="card-top">
               <div style="flex:1;min-width:0">
                 <div class="title ${a.completed ? 'done-text' : ''}">${a.title}</div>
                 <div class="subject">${a.subjectName}</div>
-                <div class="due">Due: ${a.dueDate}</div>
+                <div class="due">⏳ Due: ${a.dueDate}</div>
               </div>
               <div class="actions">
                 ${!a.completed
                   ? `<button class="tick-btn" onclick="complete('${a.id}')">✓ Done</button>`
                   : `<span class="done-badge">✓ Done</span>`}
-                <button class="edit-btn" onclick="window.location.href='edit-assignment.html?id=${a.id}'">✏️</button>
-                <button class="del-btn"  onclick="del('${a.id}')">🗑</button>
+                <button class="icon-btn edit" onclick="window.location.href='edit-assignment.html?id=${a.id}'">✏️</button>
+                <button class="icon-btn del"  onclick="del('${a.id}')">🗑</button>
               </div>
             </div>
           </div>`;
