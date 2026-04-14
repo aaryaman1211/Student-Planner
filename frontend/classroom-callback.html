@@ -262,7 +262,34 @@
           allWork.push(...work);
         }
 
-        renderAssignments(allWork);
+        // Fetch existing assignments to filter out already imported ones
+const aRes = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`);
+const existing = await aRes.json();
+const existingTitles = new Set(existing.map(a => a.title.toLowerCase().trim()));
+const dismissed = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
+
+// Filter out already imported or dismissed
+const newOnly = allWork.filter(a =>
+  !existingTitles.has(a.title.toLowerCase().trim()) &&
+  !dismissed.includes(a.title.toLowerCase().trim())
+);
+
+if (!newOnly.length) {
+  document.getElementById("spinner").style.display = "none";
+  document.getElementById("title").textContent     = "All caught up! ✅";
+  document.getElementById("subtitle").textContent  = "No new assignments to import from Classroom";
+  document.getElementById("content").innerHTML     = `
+    <button onclick="window.location.href='dashboard.html'"
+            style="width:100%;margin-top:20px;padding:14px;
+                   background:linear-gradient(135deg,#7C6FF7,#a29bfe);
+                   color:white;border:none;border-radius:14px;
+                   font-size:15px;font-weight:700;cursor:pointer">
+      Back to Dashboard
+    </button>`;
+  return;
+}
+
+renderAssignments(newOnly);
       } catch (err) {
         document.getElementById("spinner").style.display = "none";
         document.getElementById("title").textContent    = "Something went wrong";
