@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>Connecting...</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0F0E17; --card:#1C1B29; --p:#7C6FF7; --p2:#a29bfe; --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }
+    body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text);
+           min-height: 100vh; display: flex; align-items: center; justify-content: center;
+           padding: 24px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes up { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+            padding: 40px 28px; width: 100%; max-width: 380px; text-align: center;
+            animation: up 0.4s ease both; }
+    .spinner { width: 48px; height: 48px; border: 3px solid var(--border);
+               border-top-color: var(--p); border-radius: 50%;
+               animation: spin 0.8s linear infinite; margin: 0 auto 20px; }
+    .icon { font-size: 48px; margin-bottom: 16px; display: none; }
+    h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    p  { font-size: 14px; color: var(--sub); line-height: 1.6; }
+    .course-list { text-align: left; margin-top: 20px; max-height: 50vh; overflow-y: auto; }
+    .assignment-item { background: #26253A; border: 1px solid var(--border); border-radius: 12px;
+                       padding: 14px 16px; margin-bottom: 8px; display: flex;
+                       align-items: flex-start; gap: 12px; cursor: pointer;
+                       transition: background 0.15s; }
+    .assignment-item:active { background: #2d2c4a; }
+    .assignment-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--p);
+                                              flex-shrink: 0; margin-top: 2px; cursor: pointer; }
+    .item-title   { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+    .item-course  { font-size: 12px; color: var(--sub); }
+    .item-due     { font-size: 12px; color: var(--p2); margin-top: 3px; font-weight: 500; }
+    .item-no-due  { font-size: 12px; color: #FF6B6B; margin-top: 3px; }
+    .import-btn { width: 100%; padding: 15px; margin-top: 16px;
+                  background: linear-gradient(135deg, var(--p), var(--p2));
+                  color: white; border: none; border-radius: 14px;
+                  font-size: 16px; font-weight: 700; cursor: pointer;
+                  box-shadow: 0 8px 24px rgba(124,111,247,0.35);
+                  transition: transform 0.15s; }
+    .import-btn:active { transform: scale(0.97); }
+    .select-row { display: flex; justify-content: space-between; margin-bottom: 12px; }
+    .select-btn { background: none; border: 1px solid var(--border); color: var(--sub);
+                  padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+    #status { font-size: 13px; color: #FF6B6B; margin-top: 10px; min-height: 18px; }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="spinner" id="spinner"></div>
+    <h2 id="title">Connecting to Classroom</h2>
+    <p id="subtitle">Fetching your assignments...</p>
+    <div id="content"></div>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const CLIENT_ID  = "270374829098-2qbl40fhje1bcl211os09ou09ugg21d1.apps.googleusercontent.com";
+    const SCOPES     = "https://www.googleapis.com/auth/classroom.coursework.me.readonly https://www.googleapis.com/auth/classroom.courses.readonly";
+    const user       = JSON.parse(localStorage.getItem("user"));
+    if (!user) window.location.href = "login.html";
+
+    let allAssignments = [];
+    let accessToken    = null;
+
+    // Get access token from URL hash (after OAuth redirect)
+    function getTokenFromHash() {
+      const hash   = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      return params.get("access_token");
+    }
+
+    async function fetchCourses(token) {
+      const res  = await fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE", {
+        headers: { Authorization: "Bearer " + token }
+      });
+      const data = await res.json();
+      return data.courses || [];
+    }
+
+    async function fetchAssignments(token, courseId, courseName) {
+      const res  = await fetch(`https://classroom.googleapis.com/v1/courses/${courseId}/courseWork?orderBy=dueDate`, {
+        headers: { Authorization: "Bearer " + token }
+      });
+      const data = await res.json();
+      const work = data.courseWork || [];
+      return work.map(a => {
+        let dueDate = null;
+        if (a.dueDate) {
+          const m = String(a.dueDate.month).padStart(2, "0");
+          const d = String(a.dueDate.day).padStart(2, "0");
+          dueDate = `${a.dueDate.year}-${m}-${d}`;
+        }
+        return {
+          id:         a.id,
+          title:      a.title,
+          course:     courseName,
+          dueDate:    dueDate,
+          courseId:   courseId
+        };
+      });
+    }
+
+    function renderAssignments(assignments) {
+      document.getElementById("spinner").style.display = "none";
+      document.getElementById("title").textContent     = "Select assignments to import";
+      document.getElementById("subtitle").textContent  = `Found ${assignments.length} assignments across your courses`;
+
+      const content = document.getElementById("content");
+
+      // Only show future assignments or ones with no due date
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        const filtered = assignments.filter(a => {
+            if (!a.dueDate) return true; // always show no due date
+            return new Date(a.dueDate) >= today; // only future
+        });
+
+      if (!filtered.length) {
+        content.innerHTML = '<p style="text-align:center;color:var(--sub);padding:20px 0">No upcoming assignments found</p>';
+        return;
+      }
+
+      // Sort by due date
+      filtered.sort((a, b) => {
+        if (!a.dueDate && !b.dueDate) return 0;
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      });
+
+      content.innerHTML = `
+        <div class="select-row">
+          <button class="select-btn" onclick="selectAll()">Select all</button>
+          <button class="select-btn" onclick="selectNone()">Deselect all</button>
+        </div>
+        <div class="course-list" id="list"></div>
+        <button class="import-btn" onclick="importSelected()">Import Selected</button>`;
+
+      const list = document.getElementById("list");
+      filtered.forEach((a, i) => {
+        const div = document.createElement("div");
+        div.className = "assignment-item";
+        div.onclick = () => {
+          const cb = div.querySelector("input");
+          cb.checked = !cb.checked;
+        };
+        div.innerHTML = `
+          <input type="checkbox" id="cb_${i}" checked onclick="event.stopPropagation()" />
+          <div>
+            <div class="item-title">${a.title}</div>
+            <div class="item-course">📚 ${a.course}</div>
+            ${a.dueDate
+              ? `<div class="item-due">Due: ${a.dueDate}</div>`
+              : `<div class="item-no-due">No due date — will need manual date</div>`}
+          </div>`;
+        div.dataset.index = i;
+        list.appendChild(div);
+      });
+
+      // Store filtered for import
+      allAssignments = filtered;
+    }
+
+    function selectAll() {
+      document.querySelectorAll(".course-list input[type='checkbox']")
+        .forEach(cb => cb.checked = true);
+    }
+
+    function selectNone() {
+      document.querySelectorAll(".course-list input[type='checkbox']")
+        .forEach(cb => cb.checked = false);
+    }
+
+    async function importSelected() {
+      const status   = document.getElementById("status");
+      const btn      = document.querySelector(".import-btn");
+      const checkboxes = document.querySelectorAll(".course-list input[type='checkbox']");
+      const selected = [];
+
+      checkboxes.forEach((cb, i) => {
+        if (cb.checked) selected.push(allAssignments[i]);
+      });
+
+      if (!selected.length) {
+        status.textContent = "Please select at least one assignment";
+        return;
+      }
+
+      // Assignments without due dates need a default date
+      const today = new Date();
+      today.setDate(today.getDate() + 7);
+      const defaultDate = today.toISOString().split("T")[0];
+
+      btn.textContent = `Importing ${selected.length} assignments...`;
+      btn.disabled    = true;
+      let imported = 0;
+
+      for (const a of selected) {
+        try {
+          await fetch("https://web-production-dc086.up.railway.app/assignments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title:       a.title,
+              subjectName: a.course,
+              dueDate:     a.dueDate || defaultDate,
+              userId:      user.uid
+            })
+          });
+          imported++;
+        } catch (e) {
+          console.error("Failed to import:", a.title);
+        }
+      }
+
+      // Success state
+      document.getElementById("card").innerHTML = `
+        <div style="font-size:56px;margin-bottom:16px">✅</div>
+        <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Imported ${imported} assignments!</h2>
+        <p style="font-size:14px;color:var(--sub);margin-bottom:24px">
+          They're now in your planner. Assignments without due dates were set to 1 week from today.
+        </p>
+        <button onclick="window.location.href='dashboard.html'"
+                style="width:100%;padding:15px;background:linear-gradient(135deg,#7C6FF7,#a29bfe);
+                       color:white;border:none;border-radius:14px;font-size:16px;
+                       font-weight:700;cursor:pointer">
+          Go to Dashboard
+        </button>`;
+    }
+
+    async function init() {
+      accessToken = getTokenFromHash();
+
+      if (!accessToken) {
+        // No token — start OAuth flow
+        const redirectUri = "https://aaryaman1211.github.io/student-planner/classroom-callback.html";
+        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${CLIENT_ID}` +
+          `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+          `&response_type=token` +
+          `&scope=${encodeURIComponent(SCOPES)}` +
+          `&prompt=select_account`;
+        window.location.href = authUrl;
+        return;
+      }
+
+      // We have a token — fetch data
+      try {
+        document.getElementById("subtitle").textContent = "Fetching your courses...";
+        const courses = await fetchCourses(accessToken);
+
+        document.getElementById("subtitle").textContent = `Found ${courses.length} courses, fetching assignments...`;
+
+        const allWork = [];
+        for (const course of courses) {
+          const work = await fetchAssignments(accessToken, course.id, course.name);
+          allWork.push(...work);
+        }
+
+        // Fetch existing assignments to filter out already imported ones
+const aRes = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`);
+const existing = await aRes.json();
+const existingTitles = new Set(existing.map(a => a.title.toLowerCase().trim()));
+const dismissed = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
+
+// Filter out already imported or dismissed
+const newOnly = allWork.filter(a =>
+  !existingTitles.has(a.title.toLowerCase().trim()) &&
+  !dismissed.includes(a.title.toLowerCase().trim())
+);
+
+if (!newOnly.length) {
+  document.getElementById("spinner").style.display = "none";
+  document.getElementById("title").textContent     = "All caught up! ✅";
+  document.getElementById("subtitle").textContent  = "No new assignments to import from Classroom";
+  document.getElementById("content").innerHTML     = `
+    <button onclick="window.location.href='dashboard.html'"
+            style="width:100%;margin-top:20px;padding:14px;
+                   background:linear-gradient(135deg,#7C6FF7,#a29bfe);
+                   color:white;border:none;border-radius:14px;
+                   font-size:15px;font-weight:700;cursor:pointer">
+      Back to Dashboard
+    </button>`;
+  return;
+}
+
+renderAssignments(newOnly);
+      } catch (err) {
+        document.getElementById("spinner").style.display = "none";
+        document.getElementById("title").textContent    = "Something went wrong";
+        document.getElementById("subtitle").textContent = err.message;
+        console.error(err);
+      }
+    }
+
+    if (accessToken) {
+        // Save token and timestamp for auto-sync
+        localStorage.setItem("classroomToken", accessToken);
+        localStorage.setItem("classroomTokenTime", Date.now().toString());
+    }
+
+    init();
+  </script>
+</body>
+</html>

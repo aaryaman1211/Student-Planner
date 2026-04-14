@@ -10,44 +10,39 @@
   <title>Dashboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root { 
-      --bg:#0F0E17; --card:#1C1B29; --card-hover:#222133; --card2:#26253A; 
-      --p:#7C6FF7; --p2:#a29bfe; --t:#00D4A8; --t2:#55efc4; 
-      --text:#FFFFFE; --sub:#A7A9BE; --border:rgba(255,255,255,0.08); 
+    :root {
+      --bg:#0F0E17; --card:#1C1B29; --card-hover:#222133; --card2:#26253A;
+      --p:#7C6FF7; --p2:#a29bfe; --t:#00D4A8; --t2:#55efc4;
+      --text:#FFFFFE; --sub:#A7A9BE; --border:rgba(255,255,255,0.08);
     }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
            background: var(--bg); color: var(--text);
-           padding-bottom: max(90px, calc(70px + env(safe-area-inset-bottom))); 
+           padding-bottom: max(90px, calc(70px + env(safe-area-inset-bottom)));
            overflow-x: hidden; }
-           
-    /* Fluid Animations */
-    @keyframes fadeUp { 
-      from { opacity: 0; transform: translateY(24px) scale(0.98); } 
-      to { opacity: 1; transform: translateY(0) scale(1); } 
-    }
-    @keyframes glowPulse {
-      0% { box-shadow: 0 0 20px rgba(124,111,247,0.2); }
-      50% { box-shadow: 0 0 40px rgba(124,111,247,0.4); }
-      100% { box-shadow: 0 0 20px rgba(124,111,247,0.2); }
-    }
 
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
     .a1 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
     .a2 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
     .a3 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
     .a4 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
+    .a5 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
 
-    /* Header Enhancement */
+    /* Header */
     .header { background: radial-gradient(circle at top right, #2a1b6e, #130c29);
               padding: max(56px, calc(36px + env(safe-area-inset-top))) 22px 72px;
               position: relative; overflow: visible; border-bottom: 1px solid var(--border); }
     .header::before { content: ''; position: absolute; top: -50px; right: -50px;
-                      width: 250px; height: 250px; background: radial-gradient(circle, rgba(124,111,247,0.3) 0%, transparent 70%);
+                      width: 250px; height: 250px;
+                      background: radial-gradient(circle, rgba(124,111,247,0.3) 0%, transparent 70%);
                       border-radius: 50%; filter: blur(20px); z-index: 0; }
     .header::after { content: ''; position: absolute; bottom: -40px; left: 0; right: 0;
                      height: 80px; background: var(--bg); border-radius: 40px 40px 0 0; z-index: 1; }
     .header-top { display: flex; justify-content: space-between; align-items: flex-start;
                   position: relative; z-index: 2; }
-    .greeting { font-size: 28px; font-weight: 800; color: white; letter-spacing: -0.5px; }
+    .greeting     { font-size: 28px; font-weight: 800; color: white; letter-spacing: -0.5px; }
     .greeting-sub { font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 6px; font-weight: 500; }
     .avatar { width: 46px; height: 46px; background: linear-gradient(135deg, var(--p), var(--p2));
               border-radius: 16px; display: flex; align-items: center; justify-content: center;
@@ -56,55 +51,106 @@
               transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
     .avatar:active { transform: scale(0.9); }
 
-    /* Floating Stats Cards */
+    /* Stats */
     .stats { display: flex; gap: 14px; padding: 0 18px; margin-top: -30px;
              position: relative; z-index: 3; }
-    .stat { flex: 1; background: rgba(28, 27, 41, 0.85); backdrop-filter: blur(10px);
+    .stat { flex: 1; background: rgba(28,27,41,0.85); backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 20px; padding: 20px 14px; text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: transform 0.3s ease; }
-    .stat:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); }
-    .stat-num { font-size: 34px; font-weight: 800; background: linear-gradient(135deg, var(--p2), var(--p));
-                -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sub); margin-top: 6px; }
+    .stat-num   { font-size: 34px; font-weight: 800;
+                  background: linear-gradient(135deg, var(--p2), var(--p));
+                  -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase;
+                  letter-spacing: 0.5px; color: var(--sub); margin-top: 6px; }
 
-    .content { padding: 24px 18px; }
-    .section-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .notif { background: rgba(255, 217, 125, 0.1); border: 1px solid rgba(255, 217, 125, 0.2); border-radius: 16px;
-             padding: 16px; margin-bottom: 24px; font-size: 14px; color: #FFD97D; line-height: 1.6; display: none; }
+    /* Classroom Sync Button */
+    .sync-btn { display: flex; align-items: center; gap: 12px; padding: 16px 18px;
+                background: rgba(28,27,41,0.9); border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 18px; cursor: pointer; text-decoration: none;
+                transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+                box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+    .sync-btn:active { transform: scale(0.97); background: var(--card2); }
+    .sync-icon { font-size: 24px; flex-shrink: 0; }
+    .sync-text { flex: 1; }
+    .sync-title { font-size: 15px; font-weight: 700; color: var(--text); }
+    .sync-sub   { font-size: 12px; color: var(--sub); margin-top: 2px; }
+    .sync-arrow { font-size: 16px; color: var(--sub); flex-shrink: 0; }
+    .sync-badge { background: linear-gradient(135deg, #4285F4, #34A853);
+                  color: white; font-size: 10px; font-weight: 700; padding: 3px 8px;
+                  border-radius: 20px; letter-spacing: 0.3px; flex-shrink: 0; }
 
-    /* Interactive List Items */
+    /* Content */
+    .content { padding: 20px 18px; }
+    .section-title { font-size: 18px; font-weight: 700; color: var(--text);
+                     margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .notif { background: rgba(255,217,125,0.1); border: 1px solid rgba(255,217,125,0.2);
+             border-radius: 16px; padding: 16px; margin-bottom: 24px;
+             font-size: 14px; color: #FFD97D; line-height: 1.6; display: none; }
+
+    /* Cards */
     .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px;
                  padding: 18px; margin-bottom: 12px;
                  display: flex; justify-content: space-between; align-items: center;
                  cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-    .item-card:hover { transform: translateY(-2px); background: var(--card-hover); border-color: rgba(255,255,255,0.15); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
     .item-card:active { transform: scale(0.97); }
     .item-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
     .item-sub   { font-size: 13px; color: var(--sub); }
-    .item-date  { font-size: 12px; color: var(--sub); margin-top: 6px; display: flex; align-items: center; gap: 4px;}
-    
-    .badge { font-size: 11px; font-weight: 700; padding: 6px 14px;
-             border-radius: 20px; white-space: nowrap; letter-spacing: 0.5px; }
-    .badge.assignment { background: rgba(124,111,247,0.15); color: var(--p2); border: 1px solid rgba(124,111,247,0.3); }
-    .badge.exam       { background: rgba(0,212,168,0.15); color: var(--t); border: 1px solid rgba(0,212,168,0.3); }
-    .empty { text-align: center; color: var(--sub); padding: 30px 0; font-size: 14px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed var(--border); }
+    .item-date  { font-size: 12px; color: var(--sub); margin-top: 6px;
+                  display: flex; align-items: center; gap: 4px; }
+    .badge { font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 20px;
+             white-space: nowrap; letter-spacing: 0.5px; }
+    .badge.assignment { background: rgba(124,111,247,0.15); color: var(--p2);
+                        border: 1px solid rgba(124,111,247,0.3); }
+    .badge.exam       { background: rgba(0,212,168,0.15); color: var(--t);
+                        border: 1px solid rgba(0,212,168,0.3); }
+    .empty { text-align: center; color: var(--sub); padding: 30px 0; font-size: 14px;
+             background: rgba(255,255,255,0.02); border-radius: 16px;
+             border: 1px dashed var(--border); }
 
-    /* Glass Bottom Nav */
+    /* Bottom Nav */
     .bnav { position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(20,19,34,0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-top: 1px solid rgba(255,255,255,0.08); padding: 12px 0 max(20px, env(safe-area-inset-bottom));
+            background: rgba(20,19,34,0.85); backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px); border-top: 1px solid rgba(255,255,255,0.08);
+            padding: 12px 0 max(20px, env(safe-area-inset-bottom));
             display: flex; z-index: 100; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); }
     .bnav a { flex: 1; display: flex; flex-direction: column; align-items: center;
-              text-decoration: none; gap: 5px; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+              text-decoration: none; gap: 5px;
+              transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
     .bnav a:active { transform: scale(0.85); }
-    .bnav-icon  { font-size: 22px; filter: grayscale(100%) opacity(0.6); transition: all 0.3s ease; }
-    .bnav-label { font-size: 10px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
-    .bnav a.active .bnav-icon { filter: grayscale(0%) opacity(1); transform: translateY(-2px); }
+    .bnav-icon  { font-size: 22px; filter: grayscale(100%) opacity(0.6);
+                  transition: all 0.3s ease; }
+    .bnav-label { font-size: 10px; font-weight: 700; color: var(--sub);
+                  text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
+    .bnav a.active .bnav-icon  { filter: grayscale(0%) opacity(1); transform: translateY(-2px); }
     .bnav a.active .bnav-label { color: var(--p2); }
+
+    /* New assignments banner */
+.new-assign-banner { background: rgba(66,133,244,0.12); border: 1px solid rgba(66,133,244,0.3);
+                     border-radius: 16px; padding: 16px; margin-bottom: 20px;
+                     display: none; }
+.new-assign-title  { font-size: 15px; font-weight: 700; color: #7AB4F5; margin-bottom: 8px; }
+.new-assign-item   { background: rgba(255,255,255,0.05); border-radius: 10px;
+                     padding: 10px 12px; margin-bottom: 6px;
+                     display: flex; align-items: center; gap: 10px; }
+.new-assign-item input[type="checkbox"] { width: 18px; height: 18px;
+                                          accent-color: #4285F4; flex-shrink: 0; cursor: pointer; }
+.new-assign-name   { font-size: 13px; font-weight: 600; flex: 1; }
+.new-assign-course { font-size: 12px; color: var(--sub); }
+.new-assign-due    { font-size: 11px; color: var(--p2); font-weight: 500; margin-top: 2px; }
+.new-assign-btns   { display: flex; gap: 8px; margin-top: 10px; }
+.import-new-btn    { flex: 1; padding: 11px; background: linear-gradient(135deg, #4285F4, #34A853);
+                     color: white; border: none; border-radius: 12px;
+                     font-size: 14px; font-weight: 700; cursor: pointer;
+                     transition: transform 0.15s; }
+.import-new-btn:active { transform: scale(0.97); }
+.dismiss-btn       { padding: 11px 16px; background: rgba(255,255,255,0.06);
+                     border: 1px solid var(--border); color: var(--sub); border-radius: 12px;
+                     font-size: 14px; cursor: pointer; }
   </style>
 </head>
 <body>
+
   <div class="header a1">
     <div class="header-top">
       <div>
@@ -127,15 +173,45 @@
   </div>
 
   <div class="content">
+
+    <!-- Google Classroom Sync -->
+    <div class="a3" style="margin-bottom: 24px;">
+      <a href="classroom-callback.html" class="sync-btn">
+        <span class="sync-icon">🎓</span>
+        <div class="sync-text">
+          <div class="sync-title">Sync Google Classroom</div>
+          <div class="sync-sub">Import your assignments automatically</div>
+        </div>
+        <span class="sync-badge">Google</span>
+        <span class="sync-arrow">→</span>
+      </a>
+    </div>
+
+    <!-- Auto-sync new assignments banner -->
+<div id="new-assignments-banner" class="new-assign-banner a3">
+  <div class="new-assign-title">🎓 New assignments found in Classroom</div>
+  <div id="new-assign-list"></div>
+  <div class="new-assign-btns">
+    <button class="import-new-btn" onclick="importNewAssignments()">Import Selected</button>
+    <button class="dismiss-btn"    onclick="dismissNewAssignments()">Dismiss</button>
+  </div>
+</div>
+
+    <!-- Notification Banner -->
     <div id="notif-banner" class="notif a3"></div>
-    <div class="a3">
+
+    <!-- Upcoming -->
+    <div class="a4">
       <div class="section-title"><span>⏰</span> Next 7 days</div>
       <div id="upcoming"></div>
     </div>
-    <div class="a4" style="margin-top:28px">
+
+    <!-- Later -->
+    <div class="a5" style="margin-top: 28px;">
       <div class="section-title"><span>📋</span> Later</div>
       <div id="later"></div>
     </div>
+
   </div>
 
   <nav class="bnav">
@@ -154,15 +230,14 @@
   </nav>
 
   <script>
-    // Existing Dashboard JS...
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) window.location.href = "login.html";
 
-    const hour = new Date().getHours();
+    const hour  = new Date().getHours();
     const greet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-    const name = user.name || "Student";
-    document.getElementById("greeting").textContent = greet + ", " + name.split(" ")[0];
-    document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
+    const name  = user.name || "Student";
+    document.getElementById("greeting").textContent = greet + ", " + name.split(" ")[0] + " 👋";
+    document.getElementById("avatar").textContent   = name.charAt(0).toUpperCase();
 
     async function load() {
       try {
@@ -176,6 +251,7 @@
         document.getElementById("aCount").textContent = assignments.filter(a => !a.completed).length;
         document.getElementById("eCount").textContent = exams.length;
 
+        // Reminders for next 3 days
         const today3 = new Date(); today3.setHours(0,0,0,0);
         const in3    = new Date(today3); in3.setDate(in3.getDate() + 3);
         const reminders = [];
@@ -193,6 +269,7 @@
           b.innerHTML = "🔔 <strong>Due soon:</strong><br>" + reminders.map(r => "• " + r).join("<br>");
         }
 
+        // Sort and split by timeframe
         const today = new Date(); today.setHours(0,0,0,0);
         const in7   = new Date(today); in7.setDate(in7.getDate() + 7);
         const items = [
@@ -211,14 +288,156 @@
       } catch(e) { console.error(e); }
     }
 
+    // Auto-sync from Classroom on every dashboard open
+async function autoSyncClassroom() {
+  const token     = localStorage.getItem("classroomToken");
+  const tokenTime = localStorage.getItem("classroomTokenTime");
+  if (!token || !tokenTime) return;
+
+  // Token expires after 1 hour
+  const age = Date.now() - parseInt(tokenTime);
+  if (age > 55 * 60 * 1000) {
+    localStorage.removeItem("classroomToken");
+    localStorage.removeItem("classroomTokenTime");
+    return;
+  }
+
+  try {
+    // Fetch courses
+    const cRes    = await fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE", {
+      headers: { Authorization: "Bearer " + token }
+    });
+    const cData   = await cRes.json();
+    if (!cData.courses) return;
+
+    // Fetch all assignments
+    const today = new Date(); today.setHours(0,0,0,0);
+    const allWork = [];
+    for (const course of cData.courses) {
+      try {
+        const wRes  = await fetch(`https://classroom.googleapis.com/v1/courses/${course.id}/courseWork`, {
+          headers: { Authorization: "Bearer " + token }
+        });
+        const wData = await wRes.json();
+        for (const a of (wData.courseWork || [])) {
+          let dueDate = null;
+          if (a.dueDate) {
+            const m = String(a.dueDate.month).padStart(2, "0");
+            const d = String(a.dueDate.day).padStart(2, "0");
+            dueDate = `${a.dueDate.year}-${m}-${d}`;
+          }
+          // Only future or no due date
+          if (!dueDate || new Date(dueDate) >= today) {
+            allWork.push({ title: a.title, course: course.name, dueDate });
+          }
+        }
+      } catch(e) {}
+    }
+
+    // Compare with already imported assignments
+    const aRes      = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`);
+    const existing  = await aRes.json();
+    const existingTitles = new Set(existing.map(a => a.title.toLowerCase().trim()));
+
+    // Find genuinely new ones
+    const dismissed  = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
+    const newOnes    = allWork.filter(a =>
+      !existingTitles.has(a.title.toLowerCase().trim()) &&
+      !dismissed.includes(a.title.toLowerCase().trim())
+    );
+
+    if (!newOnes.length) return;
+
+    // Show banner
+    const banner = document.getElementById("new-assignments-banner");
+    const list   = document.getElementById("new-assign-list");
+    banner.style.display = "block";
+    list.innerHTML = "";
+
+    newOnes.forEach((a, i) => {
+      list.innerHTML += `
+        <div class="new-assign-item">
+          <input type="checkbox" id="nw_${i}" checked />
+          <div style="flex:1">
+            <div class="new-assign-name">${a.title}</div>
+            <div class="new-assign-course">${a.course}</div>
+            ${a.dueDate
+              ? `<div class="new-assign-due">Due: ${a.dueDate}</div>`
+              : `<div class="new-assign-due" style="color:#FF6B6B">No due date</div>`}
+          </div>
+        </div>`;
+    });
+
+    // Store for import
+    window._newAssignments = newOnes;
+
+  } catch(e) { console.error("Auto-sync error:", e); }
+}
+
+async function importNewAssignments() {
+  const checkboxes = document.querySelectorAll("[id^='nw_']");
+  const today      = new Date(); today.setDate(today.getDate() + 7);
+  const defaultDate = today.toISOString().split("T")[0];
+  let imported = 0;
+
+  for (let i = 0; i < checkboxes.length; i++) {
+    if (!checkboxes[i].checked) continue;
+    const a = window._newAssignments[i];
+    try {
+      await fetch("https://web-production-dc086.up.railway.app/assignments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title:       a.title,
+          subjectName: a.course,
+          dueDate:     a.dueDate || defaultDate,
+          userId:      user.uid
+        })
+      });
+      imported++;
+    } catch(e) {}
+  }
+
+  document.getElementById("new-assignments-banner").style.display = "none";
+  if (imported > 0) {
+    // Reload to show new assignments
+    load();
+    // Show quick toast
+    const toast = document.createElement("div");
+    toast.textContent = `✓ ${imported} assignment${imported > 1 ? "s" : ""} imported!`;
+    toast.style.cssText = `position:fixed;bottom:100px;left:50%;transform:translateX(-50%);
+      background:#00D4A8;color:#001a14;padding:10px 20px;border-radius:20px;
+      font-size:14px;font-weight:700;z-index:999;animation:fadeUp 0.3s ease both`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+  }
+}
+
+function dismissNewAssignments() {
+  // Remember dismissed so we don't show them again
+  const dismissed = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
+  (window._newAssignments || []).forEach(a => {
+    dismissed.push(a.title.toLowerCase().trim());
+  });
+  localStorage.setItem("dismissedAssignments", JSON.stringify(dismissed));
+  document.getElementById("new-assignments-banner").style.display = "none";
+}
+
     function renderList(id, items) {
       const div = document.getElementById(id);
       div.innerHTML = "";
-      if (!items.length) { div.innerHTML = '<div class="empty">Nothing here 🎉</div>'; return; }
+      if (!items.length) {
+        div.innerHTML = '<div class="empty">Nothing here 🎉</div>';
+        return;
+      }
       items.forEach((item, index) => {
-        const link = item.type === "exam" ? `exam-detail.html?id=${item.id}` : "assignments.html";
+        const link = item.type === "exam"
+          ? `exam-detail.html?id=${item.id}`
+          : "assignments.html";
         div.innerHTML += `
-          <div class="item-card" onclick="window.location.href='${link}'" style="animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.05}s both">
+          <div class="item-card"
+               onclick="window.location.href='${link}'"
+               style="animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) ${index*0.05}s both">
             <div>
               <div class="item-title">${item.title}</div>
               <div class="item-sub">${item.sub}</div>
@@ -228,7 +447,9 @@
           </div>`;
       });
     }
+
     load();
+    autoSyncClassroom(); // check for new classroom assignments
   </script>
 </body>
 </html>
