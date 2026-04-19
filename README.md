@@ -183,6 +183,14 @@ public class Exam extends AcademicItem {
 
 ---
 
+<img width="1919" height="986" alt="image" src="https://github.com/user-attachments/assets/c7b5a55b-0625-4148-9e72-95ed1cb6d61f" />
+<img width="1919" height="986" alt="image" src="https://github.com/user-attachments/assets/4d541644-c15e-4a40-a71b-4ceca25ccb79" />
+<img width="1919" height="986" alt="image" src="https://github.com/user-attachments/assets/f0d02d11-e102-4095-ba89-64c56aa25443" />
+<img width="1919" height="986" alt="image" src="https://github.com/user-attachments/assets/22cc2315-550e-4f3f-9317-5c845b8c7d51" />
+<img width="1919" height="986" alt="image" src="https://github.com/user-attachments/assets/ee1718d3-15c6-4a4c-a9fe-13707f22365e" />
+
+---
+
 ## 🌿 Git Branch History
 
 The project was built using feature branching — each feature was developed on its own branch and merged into `main` via a pull request.
