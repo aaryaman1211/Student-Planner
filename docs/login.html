@@ -8,6 +8,13 @@
   <meta name="apple-mobile-web-app-title" content="Planner">
   <link rel="manifest" href="manifest.json">
   <title>Student Planner</title>
+  <script>
+    // Register Service Worker early so it's ready by the time the user reaches the dashboard
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/student-planner/service-worker.js', { scope: '/student-planner/' })
+        .catch(err => console.warn('SW registration failed:', err));
+    }
+  </script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     :root { --bg:#0F0E17; --card:#1C1B29; --p:#7C6FF7; --p2:#a29bfe; --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }

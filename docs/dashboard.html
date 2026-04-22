@@ -8,6 +8,16 @@
   <meta name="apple-mobile-web-app-title" content="Planner">
   <link rel="manifest" href="manifest.json">
   <title>Dashboard</title>
+  <script>
+    // ── Register Service Worker as early as possible ──────────
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/student-planner/service-worker.js', { scope: '/student-planner/' })
+          .then(reg => { window._swReg = reg; })
+          .catch(err => console.warn('SW reg failed:', err));
+      });
+    }
+  </script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     :root {
@@ -285,7 +295,78 @@
 
         renderList("upcoming", items.filter(i => i.deadline >= today && i.deadline <= in7));
         renderList("later",    items.filter(i => i.deadline > in7));
+
+        // ── Push notifications: 3-day, 2-day, 1-day reminders ──
+        checkAndNotify(items);
+
       } catch(e) { console.error(e); }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // checkAndNotify — fires lock-screen notifications for items
+    // due in exactly 1, 2, or 3 days. Uses localStorage to
+    // deduplicate so the same alert only fires once per day.
+    // ─────────────────────────────────────────────────────────
+    async function checkAndNotify(items) {
+      // 1. Ask for permission if not already decided
+      if (!('Notification' in window)) return; // browser doesn't support it
+      if (Notification.permission === 'default') {
+        await Notification.requestPermission();
+      }
+      if (Notification.permission !== 'granted') return;
+
+      // 2. Wait for the service worker to be ready
+      if (!('serviceWorker' in navigator)) return;
+      let reg;
+      try {
+        reg = await navigator.serviceWorker.ready;
+      } catch(e) { return; }
+
+      // 3. Today's date string used in the dedup key
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      // Threshold days we notify on
+      const THRESHOLDS = [
+        { days: 3, label: 'in 3 days',  urgency: '' },
+        { days: 2, label: 'in 2 days',  urgency: '' },
+        { days: 1, label: 'TOMORROW',   urgency: '🚨 ' }
+      ];
+
+      const today0 = new Date(); today0.setHours(0,0,0,0);
+
+      for (const item of items) {
+        // Days until deadline (whole days)
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const deadlineDay = new Date(item.deadline); deadlineDay.setHours(0,0,0,0);
+        const daysAway = Math.round((deadlineDay - today0) / msPerDay);
+
+        const threshold = THRESHOLDS.find(t => t.days === daysAway);
+        if (!threshold) continue;
+
+        // Dedup key — one notification per item per threshold per calendar day
+        const dedupKey = `notified_${todayStr}_${item.id}_${daysAway}d`;
+        if (localStorage.getItem(dedupKey)) continue; // already sent today
+
+        const isExam = item.type === 'exam';
+        const emoji  = isExam ? '📅' : '📝';
+        const kind   = isExam ? 'Exam' : 'Assignment';
+        const dateLabel = isExam ? `on ${item.date}` : `due ${item.date}`;
+
+        const title = `${threshold.urgency}${emoji} ${kind} ${threshold.label}`;
+        const body  = `${item.title} (${item.sub}) — ${dateLabel}`;
+        const tag   = `${item.id}-${daysAway}d`;
+
+        try {
+          // Use postMessage to the SW — works even when the page is in foreground
+          if (reg.active) {
+            reg.active.postMessage({ type: 'SHOW_NOTIFICATION', title, body, tag });
+          } else {
+            // Fallback: direct Notification API
+            new Notification(title, { body, icon: 'icon.png', tag });
+          }
+          localStorage.setItem(dedupKey, '1');
+        } catch(e) { console.warn('Notification failed:', e); }
+      }
     }
 
     // Auto-sync from Classroom on every dashboard open
