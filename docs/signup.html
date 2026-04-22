@@ -1,116 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <link rel="manifest" href="manifest.json">
-  <title>Sign Up</title>
+  <title>Student Planner - Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#141313"},fontFamily:{"body-lg":["Space Grotesk"],"h1":["Space Grotesk"],"body-sm":["Space Grotesk"],"h2":["Space Grotesk"],"label":["Space Grotesk"]}}}};</script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root { --bg:#0F0E17; --card:rgba(28, 27, 41, 0.7); --p:#7C6FF7; --p2:#a29bfe; --text:#FFFFFE; --sub:#A7A9BE; --border:rgba(255,255,255,0.08); }
-    
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; min-height: 100vh;
-           background: radial-gradient(circle at top left, #2c1a6b, #0F0E17 50%, #080c14 100%);
-           display: flex; align-items: center; justify-content: center;
-           padding: max(20px, env(safe-area-inset-top)) 24px max(20px, env(safe-area-inset-bottom)); position: relative; overflow: hidden; }
-           
-    body::before { content: ''; position: absolute; top: 10%; left: 10%; width: 300px; height: 300px; background: rgba(124,111,247,0.2); border-radius: 50%; filter: blur(60px); z-index: 0; }
-    body::after { content: ''; position: absolute; bottom: 10%; right: 10%; width: 250px; height: 250px; background: rgba(0,212,168,0.15); border-radius: 50%; filter: blur(60px); z-index: 0; }
-
-    @keyframes scaleUp { 0% { opacity: 0; transform: translateY(30px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-
-    .card { background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 32px;
-            padding: 48px 32px; width: 100%; max-width: 400px; z-index: 1;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1); 
-            animation: scaleUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
-            
-    .logo { font-size: 56px; text-align: center; margin-bottom: 16px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); }
-    h1 { font-size: 28px; font-weight: 800; text-align: center; color: var(--text); margin-bottom: 6px; letter-spacing: -0.5px; }
-    .sub { font-size: 15px; color: var(--sub); text-align: center; margin-bottom: 36px; font-weight: 500; }
-    
-    label { font-size: 12px; font-weight: 700; color: var(--p2); text-transform: uppercase;
-            letter-spacing: 1px; display: block; margin-bottom: 10px; margin-left: 4px; }
-    .field { margin-bottom: 22px; }
-    input { width: 100%; padding: 18px 20px; border: 1.5px solid var(--border);
-            border-radius: 18px; font-size: 16px; outline: none;
-            background: rgba(0,0,0,0.2); color: var(--text); 
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-    input::placeholder { color: rgba(255,255,255,0.3); }
-    input:focus { border-color: var(--p); background: rgba(0,0,0,0.4); box-shadow: 0 0 0 4px rgba(124,111,247,0.15), inset 0 2px 4px rgba(0,0,0,0.1); }
-    
-    button { width: 100%; padding: 18px; margin-top: 12px;
-             background: linear-gradient(135deg, var(--p), #5a4bdf);
-             color: white; border: none; border-radius: 18px;
-             font-size: 17px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px;
-             box-shadow: 0 10px 30px rgba(124,111,247,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
-             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; }
-    button::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s; }
-    button:hover::after { left: 100%; }
-    button:active { transform: scale(0.96); box-shadow: 0 4px 15px rgba(124,111,247,0.3); }
-    
-    .link { text-align: center; margin-top: 26px; font-size: 14px; color: var(--sub); }
-    .link a { color: var(--p2); font-weight: 700; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
-    .link a:hover { border-color: var(--p2); }
-    #msg { text-align: center; font-size: 14px; margin-top: 16px; min-height: 20px; font-weight: 600; }
+    body { background-color: #141313; background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 100%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; font-family: 'Space Grotesk', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .wobbly-box { border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 4px; position: relative; background: rgba(255, 255, 255, 0.03); box-shadow: inset 0 0 15px rgba(0,0,0,0.2); }
+    .wobbly-box::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 6px; transform: rotate(-0.5deg); pointer-events: none; }
+    .chalk-text { color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 2px rgba(255, 255, 255, 0.1); }
+    .chalk-dim { color: rgba(255, 255, 255, 0.5); }
+    input { background: transparent; border: 2px dashed rgba(255,255,255,0.3); border-radius: 4px; color: rgba(255,255,255,0.85); padding: 16px; outline: none; transition: all 0.2s; width: 100%; transform: rotate(0.2deg); }
+    input:focus { border-style: solid; border-color: rgba(255,255,255,0.6); transform: rotate(0deg); background: rgba(255,255,255,0.05); }
+    @keyframes up { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    .animate-up { animation: up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
   </style>
 </head>
-<body>
-  <div class="card">
-    <div class="logo">📚</div>
-    <h1>Create Account</h1>
-    <div class="sub">Start planning your studies</div>
-    <div class="field">
-      <label>Your Name</label>
+<body class="text-zinc-50">
+  <div class="wobbly-box p-8 w-full max-w-[380px] animate-up rotate-0.5">
+    <div class="text-5xl text-center mb-4">📚</div>
+    <h1 class="text-2xl font-bold text-center chalk-text mb-1">Create Account</h1>
+    <div class="text-sm chalk-dim text-center mb-8">Start planning your studies</div>
+
+    <div class="mb-5">
+      <label class="block text-[11px] font-bold chalk-dim uppercase tracking-widest mb-2">Your Name</label>
       <input type="text" id="name" placeholder="aaryaman1211" />
     </div>
-    <div class="field">
-      <label>Email</label>
+    <div class="mb-5">
+      <label class="block text-[11px] font-bold chalk-dim uppercase tracking-widest mb-2">Email</label>
       <input type="email" id="email" placeholder="you@email.com" />
     </div>
-    <div class="field">
-      <label>Password</label>
+    <div class="mb-6">
+      <label class="block text-[11px] font-bold chalk-dim uppercase tracking-widest mb-2">Password</label>
       <input type="password" id="password" placeholder="Min 6 characters" />
     </div>
-    <button onclick="signup()" id="btn">Create Account</button>
-    <div class="link">Already have an account? <a href="login.html">Log In</a></div>
-    <div id="msg"></div>
+
+    <button onclick="signup()" id="btn" class="w-full wobbly-box p-4 font-bold chalk-text hover:bg-white/10 hover:rotate-1 transition-all active:scale-95">Create Account</button>
+    <div class="text-center mt-6 text-sm chalk-dim">Already have an account? <a href="login.html" class="chalk-text font-bold underline decoration-white/30 hover:decoration-white">Log In</a></div>
+    <div id="msg" class="text-center text-sm mt-4 min-h-[18px] font-bold"></div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, updateProfile }
-      from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBV0D7YQVZxwmCzF2DOqgXCwMMQCwC9eKo",
-      authDomain: "student-planner-ca092.firebaseapp.com",
-      projectId: "student-planner-ca092"
-    };
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    const firebaseConfig = { apiKey: "AIzaSyBV0D7YQVZxwmCzF2DOqgXCwMMQCwC9eKo", authDomain: "student-planner-ca092.firebaseapp.com", projectId: "student-planner-ca092" };
     const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-
     window.signup = async function() {
-      const name     = document.getElementById("name").value.trim();
-      const email    = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const msg      = document.getElementById("msg");
-      const btn      = document.getElementById("btn");
+      const name = document.getElementById("name").value.trim(), email = document.getElementById("email").value, password = document.getElementById("password").value, msg = document.getElementById("msg"), btn = document.getElementById("btn");
       if (!name) { msg.style.color = "#FF6B6B"; msg.textContent = "Please enter your name"; return; }
       btn.textContent = "Creating...";
       try {
         const result = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(result.user, { displayName: name });
-        msg.style.color = "#00D4A8";
-        msg.textContent = "✓ Account created! Redirecting...";
+        msg.style.color = "#00D4A8"; msg.textContent = "✓ Account created! Redirecting...";
         setTimeout(() => window.location.href = "login.html", 1200);
-      } catch (err) {
-        msg.style.color = "#FF6B6B";
-        msg.textContent = err.message;
-        btn.textContent = "Create Account";
-      }
+      } catch (err) { msg.style.color = "#FF6B6B"; msg.textContent = err.message; btn.textContent = "Create Account"; }
     }
   </script>
 </body>

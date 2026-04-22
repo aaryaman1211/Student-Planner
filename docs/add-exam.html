@@ -1,106 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <link rel="manifest" href="manifest.json">
   <title>Add Exam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#141313"},fontFamily:{"body-lg":["Space Grotesk"],"h1":["Space Grotesk"],"body-sm":["Space Grotesk"],"h2":["Space Grotesk"],"label":["Space Grotesk"]}}}};</script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root { --bg:#0F0E17; --card:#1C1B29; --t:#00D4A8; --t2:#55efc4; --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }
-    body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh;
-           padding-bottom: 40px; }
-    @keyframes up { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
-    .header { background: linear-gradient(135deg, #001f18, #003d2e);
-              padding: max(52px, calc(34px + env(safe-area-inset-top))) 20px 24px;
-              display: flex; align-items: center; gap: 14px; }
-    .back { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-            color: white; width: 40px; height: 40px; border-radius: 13px; font-size: 18px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .header h1 { font-size: 20px; font-weight: 700; color: white; }
-    .form { padding: 24px 20px; animation: up 0.4s ease both; }
-    .field { margin-bottom: 22px; }
-    label { font-size: 11px; font-weight: 700; color: var(--t); text-transform: uppercase;
-            letter-spacing: 0.08em; display: block; margin-bottom: 9px; }
-    input { width: 100%; padding: 15px 16px; border: 1.5px solid var(--border);
-            border-radius: 14px; font-size: 16px; outline: none;
-            background: var(--card); color: var(--text); transition: all 0.2s; }
-    input::placeholder { color: var(--sub); }
-    input:focus { border-color: var(--t); }
-    .ch-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-    .ch-row  { display: flex; gap: 8px; }
-    .ch-row input { margin-bottom: 0; flex: 1; }
-    .ch-del { background: rgba(255,107,107,0.15); border: none; color: #FF6B6B;
-              width: 46px; border-radius: 12px; font-size: 18px; cursor: pointer;
-              flex-shrink: 0; transition: transform 0.15s; }
-    .ch-del:active { transform: scale(0.9); }
-    .add-ch { width: 100%; padding: 13px; background: rgba(0,212,168,0.1);
-              border: 1.5px dashed rgba(0,212,168,0.3); color: var(--t); border-radius: 14px;
-              font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 24px;
-              transition: all 0.2s; }
-    .add-ch:active { background: rgba(0,212,168,0.2); }
-    .save-btn { width: 100%; padding: 16px;
-                background: linear-gradient(135deg, var(--t), var(--t2));
-                color: #001a14; border: none; border-radius: 14px; font-size: 16px;
-                font-weight: 700; cursor: pointer; box-shadow: 0 8px 30px rgba(0,212,168,0.3);
-                transition: transform 0.15s; }
-    .save-btn:active { transform: scale(0.97); }
-    #msg { text-align: center; font-size: 14px; margin-top: 14px; }
+    body { background-color: #141313; background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 100%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
+    .wobbly-box { border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 4px; position: relative; background: rgba(255, 255, 255, 0.03); box-shadow: inset 0 0 15px rgba(0,0,0,0.2); }
+    .wobbly-box::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 6px; transform: rotate(-0.5deg); pointer-events: none; }
+    .chalk-dashed { border: 2px dashed rgba(255, 255, 255, 0.3); border-radius: 4px; transform: rotate(0.2deg); }
+    .chalk-text { color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 2px rgba(255, 255, 255, 0.1); }
+    .chalk-dim { color: rgba(255, 255, 255, 0.5); }
+    input { background: transparent; border: 2px dashed rgba(255,255,255,0.3); border-radius: 4px; color: rgba(255,255,255,0.85); padding: 16px; outline: none; transition: all 0.2s; width: 100%; transform: rotate(0.2deg); }
+    input:focus { border-style: solid; border-color: rgba(255,255,255,0.6); transform: rotate(0deg); background: rgba(255,255,255,0.05); }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(24px) scale(0.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+    .animate-up { animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
   </style>
 </head>
-<body>
-  <div class="header">
-    <button class="back" onclick="history.back()">←</button>
-    <h1>New Exam</h1>
+<body class="text-zinc-50 pb-20">
+  <div class="bg-emerald-950/20 flex items-center gap-4 px-6 pt-12 pb-6 border-b-4 border-emerald-400/20 z-40 sticky top-0 animate-up backdrop-blur">
+    <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center border-2 border-white/20 rounded wobbly-box hover:bg-white/10 transition-all font-bold">←</button>
+    <h1 class="text-xl font-bold chalk-text">New Exam</h1>
   </div>
-  <div class="form">
-    <div class="field"><label>Exam Title</label><input type="text" id="title" placeholder="e.g. Physics Unit Test" /></div>
-    <div class="field"><label>Subject</label><input type="text" id="subject" placeholder="e.g. Physics" /></div>
-    <div class="field"><label>Exam Date</label><input type="date" id="examDate" /></div>
-    <div class="field">
-      <label>Chapters / Portion</label>
-      <div class="ch-list" id="chapters">
-        <div class="ch-row">
-          <input type="text" placeholder="e.g. Chapter 1 - Motion" class="ch-input" />
-          <button class="ch-del" onclick="removeCh(this)">×</button>
+  
+  <div class="max-w-screen-xl mx-auto px-6 mt-8 animate-up" style="animation-delay: 0.1s;">
+    <div class="mb-5">
+      <label class="block text-[11px] font-bold text-emerald-200 uppercase tracking-widest mb-2">Exam Title</label>
+      <input type="text" id="title" placeholder="e.g. Physics Unit Test" />
+    </div>
+    <div class="mb-5">
+      <label class="block text-[11px] font-bold text-emerald-200 uppercase tracking-widest mb-2">Subject</label>
+      <input type="text" id="subject" placeholder="e.g. Physics" />
+    </div>
+    <div class="mb-6">
+      <label class="block text-[11px] font-bold text-emerald-200 uppercase tracking-widest mb-2">Exam Date</label>
+      <input type="date" id="examDate" />
+    </div>
+    
+    <div class="mb-8">
+      <label class="block text-[11px] font-bold text-emerald-200 uppercase tracking-widest mb-2">Chapters / Portion</label>
+      <div id="chapters" class="space-y-3 mb-4">
+        <div class="flex gap-2 ch-row items-center">
+          <input type="text" placeholder="e.g. Chapter 1 - Motion" class="ch-input flex-1 m-0" />
+          <button onclick="removeCh(this)" class="w-12 h-12 flex items-center justify-center border border-red-400/30 text-red-400 rounded hover:bg-red-400/10 transition-colors text-xl font-bold flex-shrink-0">×</button>
         </div>
       </div>
-      <button class="add-ch" onclick="addChapter()">+ Add chapter</button>
+      <button onclick="addChapter()" class="w-full chalk-dashed py-3 text-[11px] font-bold tracking-widest uppercase text-emerald-300 hover:bg-emerald-400/10 transition-all">+ Add chapter</button>
     </div>
-    <button class="save-btn" onclick="save()" id="btn">Save Exam</button>
-    <div id="msg"></div>
+
+    <button onclick="save()" id="btn" class="w-full wobbly-box p-4 font-bold text-emerald-950 bg-emerald-400 border-emerald-500 hover:bg-emerald-300 transition-all active:scale-95">Save Exam</button>
+    <div id="msg" class="text-center text-sm mt-4 min-h-[18px] font-bold"></div>
   </div>
+
   <script>
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) window.location.href = "login.html";
+    const user = JSON.parse(localStorage.getItem("user")); if (!user) window.location.href = "login.html";
     function addChapter() {
-      const div = document.createElement("div");
-      div.className = "ch-row";
-      div.innerHTML = `<input type="text" placeholder="Add chapter name" class="ch-input" /><button class="ch-del" onclick="removeCh(this)">×</button>`;
+      const div = document.createElement("div"); div.className = "flex gap-2 ch-row items-center";
+      div.innerHTML = `<input type="text" placeholder="Add chapter name" class="ch-input flex-1 m-0" /><button onclick="removeCh(this)" class="w-12 h-12 flex items-center justify-center border border-red-400/30 text-red-400 rounded hover:bg-red-400/10 transition-colors text-xl font-bold flex-shrink-0">×</button>`;
       document.getElementById("chapters").appendChild(div);
     }
-    function removeCh(btn) {
-      const rows = document.querySelectorAll(".ch-row");
-      if (rows.length > 1) btn.parentElement.remove();
-    }
+    function removeCh(btn) { const rows = document.querySelectorAll(".ch-row"); if (rows.length > 1) btn.parentElement.remove(); }
     async function save() {
-      const title    = document.getElementById("title").value.trim();
-      const subject  = document.getElementById("subject").value.trim();
-      const examDate = document.getElementById("examDate").value;
-      const msg = document.getElementById("msg");
-      const btn = document.getElementById("btn");
-      const portion = Array.from(document.querySelectorAll(".ch-input"))
-        .map(i => i.value.trim()).filter(v => v).map(name => ({ name, completed: false }));
+      const title = document.getElementById("title").value.trim(), subject = document.getElementById("subject").value.trim(), examDate = document.getElementById("examDate").value, msg = document.getElementById("msg"), btn = document.getElementById("btn");
+      const portion = Array.from(document.querySelectorAll(".ch-input")).map(i => i.value.trim()).filter(v => v).map(name => ({ name, completed: false }));
       if (!title || !subject || !examDate) { msg.style.color="#FF6B6B"; msg.textContent="Please fill title, subject and date"; return; }
       btn.textContent = "Saving...";
-      const res = await fetch("https://web-production-dc086.up.railway.app/exams", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, subjectName: subject, examDate, userId: user.uid, portion })
-      });
-      if (res.ok) { msg.style.color="#00D4A8"; msg.textContent="✓ Exam saved!"; setTimeout(() => window.location.href="exams.html", 800); }
-      else { msg.style.color="#FF6B6B"; msg.textContent="Something went wrong"; btn.textContent="Save Exam"; }
+      const res = await fetch("https://web-production-dc086.up.railway.app/exams", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, subjectName: subject, examDate, userId: user.uid, portion }) });
+      if (res.ok) { msg.style.color="#00D4A8"; msg.textContent="✓ Exam saved!"; setTimeout(() => window.location.href="exams.html", 800); } else { msg.style.color="#FF6B6B"; msg.textContent="Something went wrong"; btn.textContent="Save Exam"; }
     }
   </script>
 </body>
