@@ -13,19 +13,158 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#141313"},fontFamily:{"body-lg":["Space Grotesk"],"h1":["Space Grotesk"],"body-sm":["Space Grotesk"],"h2":["Space Grotesk"],"label":["Space Grotesk"]}}}};</script>
   <style>
-    body { background-color: #141313; background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 100%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 40px 40px, 40px 40px; font-family: 'Space Grotesk', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-    .wobbly-box { border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 4px; position: relative; background: rgba(255, 255, 255, 0.03); box-shadow: inset 0 0 15px rgba(0,0,0,0.2); }
-    .wobbly-box::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 6px; transform: rotate(-0.5deg); pointer-events: none; }
+    * { box-sizing: border-box; }
+    body {
+      background-color: #141313;
+      background-image:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 100%),
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      margin: 0;
+    }
+    .wobbly-box {
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+    }
+    .wobbly-box::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      transform: rotate(-0.5deg);
+      pointer-events: none;
+    }
     .chalk-text { color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 2px rgba(255, 255, 255, 0.1); }
-    .chalk-dim { color: rgba(255, 255, 255, 0.5); }
-    input { background: transparent; border: 2px dashed rgba(255,255,255,0.3); border-radius: 4px; color: rgba(255,255,255,0.85); padding: 16px; outline: none; transition: all 0.2s; width: 100%; transform: rotate(0.2deg); }
-    input:focus { border-style: solid; border-color: rgba(255,255,255,0.6); transform: rotate(0deg); background: rgba(255,255,255,0.05); }
-    @keyframes up { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
-    .animate-up { animation: up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .chalk-dim  { color: rgba(255, 255, 255, 0.5); }
+    input {
+      background: transparent;
+      border: 2px dashed rgba(255,255,255,0.3);
+      border-radius: 4px;
+      color: rgba(255,255,255,0.85);
+      padding: 16px;
+      outline: none;
+      transition: all 0.2s;
+      width: 100%;
+      transform: rotate(0.2deg);
+    }
+    input:focus {
+      border-style: solid;
+      border-color: rgba(255,255,255,0.6);
+      transform: rotate(0deg);
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* ── Shared animation keyframes ─────────────────────────── */
+    @keyframes fadeUp  { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes splashIn  { from { opacity:0; transform:scale(0.88) translateY(18px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    @keyframes splashOut { from { opacity:1; transform:scale(1); } to { opacity:0; transform:scale(1.05); } }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .animate-up  { animation: fadeUp  0.5s cubic-bezier(0.16,1,0.3,1) both; }
+    .splash-in   { animation: splashIn  0.55s cubic-bezier(0.16,1,0.3,1) both; }
+    .splash-out  { animation: splashOut 0.38s cubic-bezier(0.4,0,1,1)   forwards; }
+
+    /* ── Overlay base ───────────────────────────────────────── */
+    .splash-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background-color: #141313;
+      background-image:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 100%),
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Full splash (returning user) ───────────────────────── */
+    #splash-full .card {
+      border: 2px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      padding: 40px 48px;
+      text-align: center;
+      background: rgba(255,255,255,0.02);
+      position: relative;
+    }
+    #splash-full .card::before {
+      content: '';
+      position: absolute; inset: -3px;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      transform: rotate(-0.6deg);
+      pointer-events: none;
+    }
+    #splash-full .s-icon  { font-size: 68px; line-height: 1; filter: drop-shadow(0 0 20px rgba(255,255,255,0.12)); }
+    #splash-full .s-title { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.03em; color: rgba(255,255,255,0.9); margin-top: 18px; }
+    #splash-full .s-sub   { font-size: 0.8rem; color: rgba(255,255,255,0.4); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 8px; }
+    .spinner {
+      width: 26px; height: 26px; margin: 22px auto 0;
+      border: 2px solid rgba(255,255,255,0.12);
+      border-top-color: rgba(255,255,255,0.65);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* ── Mini splash (guest) ────────────────────────────────── */
+    #splash-mini .card {
+      border: 2px solid rgba(255,255,255,0.22);
+      border-radius: 6px;
+      padding: 18px 28px;
+      background: rgba(255,255,255,0.02);
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    #splash-mini .card::before {
+      content: '';
+      position: absolute; inset: -3px;
+      border: 2px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      transform: rotate(-0.4deg);
+      pointer-events: none;
+    }
+    #splash-mini .m-icon  { font-size: 34px; flex-shrink: 0; }
+    #splash-mini .m-title { font-size: 1.15rem; font-weight: 800; color: rgba(255,255,255,0.85); }
+    #splash-mini .m-sub   { font-size: 0.68rem; color: rgba(255,255,255,0.38); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 3px; }
   </style>
 </head>
 <body class="text-zinc-50">
-  <div class="wobbly-box p-8 w-full max-w-[380px] animate-up -rotate-1">
+
+  <!-- ── Full-screen splash: returning user being re-authenticated ── -->
+  <div id="splash-full" class="splash-overlay" style="display:none">
+    <div class="card splash-in">
+      <div class="s-icon">📚</div>
+      <div class="s-title">Student Planner</div>
+      <div class="s-sub">Welcome back</div>
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <!-- ── Mini splash: guest user, shown briefly before login form ── -->
+  <div id="splash-mini" class="splash-overlay" style="display:none">
+    <div class="card splash-in">
+      <div class="m-icon">📚</div>
+      <div>
+        <div class="m-title">Student Planner</div>
+        <div class="m-sub">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Login form (hidden until splash exits) ────────────── -->
+  <div id="login-form" class="wobbly-box p-8 w-full max-w-[380px] -rotate-1" style="display:none">
     <div class="text-5xl text-center mb-4">📚</div>
     <h1 class="text-2xl font-bold text-center chalk-text mb-1">Student Planner</h1>
     <div class="text-sm chalk-dim text-center mb-8">Welcome back</div>
@@ -50,44 +189,109 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-    const firebaseConfig = { apiKey: "AIzaSyBV0D7YQVZxwmCzF2DOqgXCwMMQCwC9eKo", authDomain: "student-planner-ca092.firebaseapp.com", projectId: "student-planner-ca092" };
+    import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+                                        from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBV0D7YQVZxwmCzF2DOqgXCwMMQCwC9eKo",
+      authDomain: "student-planner-ca092.firebaseapp.com",
+      projectId: "student-planner-ca092"
+    };
     const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+
     const keepSignedIn = localStorage.getItem("keepSignedIn") === "true";
     const savedUser    = localStorage.getItem("user");
+
+    /* Fade out an overlay, then run a callback */
+    function dismissOverlay(id, cb) {
+      const overlay = document.getElementById(id);
+      const card    = overlay.querySelector(".card");
+      card.classList.add("splash-out");
+      setTimeout(() => { overlay.style.display = "none"; if (cb) cb(); }, 400);
+    }
+
+    /* Reveal the login form with a fadeUp animation */
+    function showLoginForm() {
+      const form = document.getElementById("login-form");
+      form.style.display = "block";
+      form.classList.add("animate-up");
+    }
+
     if (keepSignedIn && savedUser) {
+      /* ── Returning user: full-screen splash while Firebase re-checks ── */
+      document.getElementById("splash-full").style.display = "flex";
+
       onAuthStateChanged(auth, async (firebaseUser) => {
         if (firebaseUser) {
           try {
             const token = await firebaseUser.getIdToken();
-            const res = await fetch("https://web-production-dc086.up.railway.app/auth/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) });
+            const res   = await fetch("https://web-production-dc086.up.railway.app/auth/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token })
+            });
             if (res.ok) {
-              const user = await res.json();
-              user.name  = firebaseUser.displayName || "Student"; user.email = firebaseUser.email;
-              localStorage.setItem("user", JSON.stringify(user)); window.location.href = "dashboard.html";
+              const user  = await res.json();
+              user.name   = firebaseUser.displayName || "Student";
+              user.email  = firebaseUser.email;
+              localStorage.setItem("user", JSON.stringify(user));
+              /* Fade splash out, then navigate */
+              dismissOverlay("splash-full", () => { window.location.href = "dashboard.html"; });
+              return;
             }
           } catch (err) { console.error("Auto login failed", err); }
         }
+        /* Re-auth failed — clear state and drop to login form */
+        signOut(auth);
+        localStorage.removeItem("user");
+        dismissOverlay("splash-full", showLoginForm);
       });
-    } else { signOut(auth); localStorage.removeItem("user"); }
 
-    window.login = async function() {
-      const email = document.getElementById("email").value.trim(), password = document.getElementById("password").value, keep = document.getElementById("keepSignedIn").checked, msg = document.getElementById("msg"), btn = document.getElementById("btn");
+    } else {
+      /* ── Guest: mini splash shown briefly, then login form ── */
+      signOut(auth);
+      localStorage.removeItem("user");
+      document.getElementById("splash-mini").style.display = "flex";
+      setTimeout(() => dismissOverlay("splash-mini", showLoginForm), 900);
+    }
+
+    /* ── Manual login ─────────────────────────────────────── */
+    window.login = async function () {
+      const email    = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const keep     = document.getElementById("keepSignedIn").checked;
+      const msg      = document.getElementById("msg");
+      const btn      = document.getElementById("btn");
+
       if (!email || !password) { msg.textContent = "Please enter your email and password"; return; }
-      btn.textContent = "Logging in..."; msg.textContent = "";
+      btn.textContent = "Logging in…"; msg.textContent = "";
+
       try {
         const result = await signInWithEmailAndPassword(auth, email, password);
         const token  = await result.user.getIdToken();
-        const res = await fetch("https://web-production-dc086.up.railway.app/auth/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) });
+        const res    = await fetch("https://web-production-dc086.up.railway.app/auth/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token })
+        });
         if (res.ok) {
-          const user = await res.json(); user.name = result.user.displayName || "Student"; user.email = result.user.email;
-          localStorage.setItem("user", JSON.stringify(user)); localStorage.setItem("keepSignedIn", keep ? "true" : "false");
+          const user  = await res.json();
+          user.name   = result.user.displayName || "Student";
+          user.email  = result.user.email;
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("keepSignedIn", keep ? "true" : "false");
           window.location.href = "dashboard.html";
-        } else { msg.textContent = "Server error — try again"; btn.textContent = "Login"; }
-      } catch (err) { msg.textContent = "Login failed: " + err.message; btn.textContent = "Login"; }
-    }
+        } else {
+          msg.textContent = "Server error — try again";
+          btn.textContent = "Login";
+        }
+      } catch (err) {
+        msg.textContent = "Login failed: " + err.message;
+        btn.textContent = "Login";
+      }
+    };
   </script>
 </body>
 </html>

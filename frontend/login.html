@@ -1,99 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Planner">
-  <link rel="manifest" href="manifest.json">
-  <title>Student Planner</title>
+  <title>Student Planner - Login</title>
   <script>
-    // Register Service Worker early so it's ready by the time the user reaches the dashboard
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/student-planner/service-worker.js', { scope: '/student-planner/' })
-        .catch(err => console.warn('SW registration failed:', err));
+      navigator.serviceWorker.register('/student-planner/service-worker.js', { scope: '/student-planner/' }).catch(err => console.warn('SW failed:', err));
     }
   </script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#141313"},fontFamily:{"body-lg":["Space Grotesk"],"h1":["Space Grotesk"],"body-sm":["Space Grotesk"],"h2":["Space Grotesk"],"label":["Space Grotesk"]}}}};</script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root { --bg:#0F0E17; --card:#1C1B29; --p:#7C6FF7; --p2:#a29bfe; --text:#FFFFFE; --sub:#A7A9BE; --border:#2D2C44; }
-    body { font-family: -apple-system, sans-serif; min-height: 100vh;
-           min-height: -webkit-fill-available;
-           background: linear-gradient(160deg, #1a1040 0%, #0F0E17 60%, #0a1628 100%);
-           display: flex; align-items: center; justify-content: center;
-           padding: max(20px, env(safe-area-inset-top)) 24px
-                    max(20px, env(safe-area-inset-bottom)); }
-    @keyframes up { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px;
-            padding: 40px 28px; width: 100%; max-width: 380px;
-            box-shadow: 0 32px 80px rgba(0,0,0,0.5); animation: up 0.5s ease both; }
-    .logo { font-size: 52px; text-align: center; margin-bottom: 10px; }
-    h1 { font-size: 26px; font-weight: 700; text-align: center; color: var(--text); margin-bottom: 4px; }
-    .sub { font-size: 14px; color: var(--sub); text-align: center; margin-bottom: 32px; }
-    .field { margin-bottom: 18px; }
-    label.field-label { font-size: 11px; font-weight: 700; color: var(--p2);
-                        text-transform: uppercase; letter-spacing: 0.08em;
-                        display: block; margin-bottom: 8px; }
-    input[type="email"],
-    input[type="password"] { width: 100%; padding: 15px 16px; border: 1.5px solid var(--border);
-                              border-radius: 14px; font-size: 16px; outline: none;
-                              background: #26253A; color: var(--text); transition: all 0.2s; }
-    input[type="email"]::placeholder,
-    input[type="password"]::placeholder { color: var(--sub); }
-    input[type="email"]:focus,
-    input[type="password"]:focus { border-color: var(--p); background: #2d2c4a; }
+    * { box-sizing: border-box; }
+    body {
+      background-color: #141313;
+      background-image:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 100%),
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      margin: 0;
+    }
+    .wobbly-box {
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+    }
+    .wobbly-box::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      transform: rotate(-0.5deg);
+      pointer-events: none;
+    }
+    .chalk-text { color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 2px rgba(255, 255, 255, 0.1); }
+    .chalk-dim  { color: rgba(255, 255, 255, 0.5); }
+    input {
+      background: transparent;
+      border: 2px dashed rgba(255,255,255,0.3);
+      border-radius: 4px;
+      color: rgba(255,255,255,0.85);
+      padding: 16px;
+      outline: none;
+      transition: all 0.2s;
+      width: 100%;
+      transform: rotate(0.2deg);
+    }
+    input:focus {
+      border-style: solid;
+      border-color: rgba(255,255,255,0.6);
+      transform: rotate(0deg);
+      background: rgba(255,255,255,0.05);
+    }
 
-    .keep-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-    .keep-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--p);
-                                       cursor: pointer; flex-shrink: 0; border-radius: 6px; }
-    .keep-row label { font-size: 14px; color: var(--sub); cursor: pointer; font-weight: 500;
-                      user-select: none; }
+    /* ── Shared animation keyframes ─────────────────────────── */
+    @keyframes fadeUp  { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes splashIn  { from { opacity:0; transform:scale(0.88) translateY(18px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    @keyframes splashOut { from { opacity:1; transform:scale(1); } to { opacity:0; transform:scale(1.05); } }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .animate-up  { animation: fadeUp  0.5s cubic-bezier(0.16,1,0.3,1) both; }
+    .splash-in   { animation: splashIn  0.55s cubic-bezier(0.16,1,0.3,1) both; }
+    .splash-out  { animation: splashOut 0.38s cubic-bezier(0.4,0,1,1)   forwards; }
 
-    button { width: 100%; padding: 16px;
-             background: linear-gradient(135deg, var(--p), var(--p2));
-             color: white; border: none; border-radius: 14px;
-             font-size: 16px; font-weight: 700; cursor: pointer;
-             box-shadow: 0 8px 30px rgba(124,111,247,0.4);
-             transition: transform 0.15s, box-shadow 0.15s; }
-    button:active { transform: scale(0.97); box-shadow: 0 4px 15px rgba(124,111,247,0.3); }
-    .link { text-align: center; margin-top: 22px; font-size: 14px; color: var(--sub); }
-    .link a { color: var(--p2); font-weight: 600; text-decoration: none; }
-    #msg { text-align: center; font-size: 13px; color: #FF6B6B;
-           margin-top: 14px; min-height: 18px; }
+    /* ── Overlay base ───────────────────────────────────────── */
+    .splash-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background-color: #141313;
+      background-image:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 100%),
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Full splash (returning user) ───────────────────────── */
+    #splash-full .card {
+      border: 2px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      padding: 40px 48px;
+      text-align: center;
+      background: rgba(255,255,255,0.02);
+      position: relative;
+    }
+    #splash-full .card::before {
+      content: '';
+      position: absolute; inset: -3px;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      transform: rotate(-0.6deg);
+      pointer-events: none;
+    }
+    #splash-full .s-icon  { font-size: 68px; line-height: 1; filter: drop-shadow(0 0 20px rgba(255,255,255,0.12)); }
+    #splash-full .s-title { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.03em; color: rgba(255,255,255,0.9); margin-top: 18px; }
+    #splash-full .s-sub   { font-size: 0.8rem; color: rgba(255,255,255,0.4); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 8px; }
+    .spinner {
+      width: 26px; height: 26px; margin: 22px auto 0;
+      border: 2px solid rgba(255,255,255,0.12);
+      border-top-color: rgba(255,255,255,0.65);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* ── Mini splash (guest) ────────────────────────────────── */
+    #splash-mini .card {
+      border: 2px solid rgba(255,255,255,0.22);
+      border-radius: 6px;
+      padding: 18px 28px;
+      background: rgba(255,255,255,0.02);
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    #splash-mini .card::before {
+      content: '';
+      position: absolute; inset: -3px;
+      border: 2px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      transform: rotate(-0.4deg);
+      pointer-events: none;
+    }
+    #splash-mini .m-icon  { font-size: 34px; flex-shrink: 0; }
+    #splash-mini .m-title { font-size: 1.15rem; font-weight: 800; color: rgba(255,255,255,0.85); }
+    #splash-mini .m-sub   { font-size: 0.68rem; color: rgba(255,255,255,0.38); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 3px; }
   </style>
 </head>
-<body>
-  <div class="card">
-    <div class="logo">📚</div>
-    <h1>Student Planner</h1>
-    <div class="sub">Welcome back</div>
+<body class="text-zinc-50">
 
-    <div class="field">
-      <label class="field-label">Email</label>
+  <!-- ── Full-screen splash: returning user being re-authenticated ── -->
+  <div id="splash-full" class="splash-overlay" style="display:none">
+    <div class="card splash-in">
+      <div class="s-icon">📚</div>
+      <div class="s-title">Student Planner</div>
+      <div class="s-sub">Welcome back</div>
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <!-- ── Mini splash: guest user, shown briefly before login form ── -->
+  <div id="splash-mini" class="splash-overlay" style="display:none">
+    <div class="card splash-in">
+      <div class="m-icon">📚</div>
+      <div>
+        <div class="m-title">Student Planner</div>
+        <div class="m-sub">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Login form (hidden until splash exits) ────────────── -->
+  <div id="login-form" class="wobbly-box p-8 w-full max-w-[380px] -rotate-1" style="display:none">
+    <div class="text-5xl text-center mb-4">📚</div>
+    <h1 class="text-2xl font-bold text-center chalk-text mb-1">Student Planner</h1>
+    <div class="text-sm chalk-dim text-center mb-8">Welcome back</div>
+
+    <div class="mb-5">
+      <label class="block text-[11px] font-bold chalk-dim uppercase tracking-widest mb-2">Email</label>
       <input type="email" id="email" placeholder="you@email.com" />
     </div>
-
-    <div class="field">
-      <label class="field-label">Password</label>
+    <div class="mb-5">
+      <label class="block text-[11px] font-bold chalk-dim uppercase tracking-widest mb-2">Password</label>
       <input type="password" id="password" placeholder="••••••••" />
     </div>
 
-    <div class="keep-row">
-      <input type="checkbox" id="keepSignedIn" />
-      <label for="keepSignedIn">Keep me signed in</label>
+    <div class="flex items-center gap-3 mb-6">
+      <input type="checkbox" id="keepSignedIn" class="w-5 h-5 bg-transparent border-2 border-white/40 rounded focus:ring-0 text-white cursor-pointer" />
+      <label for="keepSignedIn" class="text-sm chalk-dim cursor-pointer font-medium">Keep me signed in</label>
     </div>
 
-    <button onclick="login()" id="btn">Login</button>
-    <div class="link">No account? <a href="signup.html">Sign up</a></div>
-    <div id="msg"></div>
+    <button onclick="login()" id="btn" class="w-full wobbly-box p-4 font-bold chalk-text hover:bg-white/10 hover:-rotate-1 transition-all active:scale-95">Login</button>
+    <div class="text-center mt-6 text-sm chalk-dim">No account? <a href="signup.html" class="chalk-text font-bold underline decoration-white/30 hover:decoration-white">Sign up</a></div>
+    <div id="msg" class="text-center text-sm text-red-400 mt-4 min-h-[18px] font-bold"></div>
   </div>
 
   <script type="module">
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
-      from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+                                        from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBV0D7YQVZxwmCzF2DOqgXCwMMQCwC9eKo",
@@ -106,62 +204,82 @@
     const keepSignedIn = localStorage.getItem("keepSignedIn") === "true";
     const savedUser    = localStorage.getItem("user");
 
+    /* Fade out an overlay, then run a callback */
+    function dismissOverlay(id, cb) {
+      const overlay = document.getElementById(id);
+      const card    = overlay.querySelector(".card");
+      card.classList.add("splash-out");
+      setTimeout(() => { overlay.style.display = "none"; if (cb) cb(); }, 400);
+    }
+
+    /* Reveal the login form with a fadeUp animation */
+    function showLoginForm() {
+      const form = document.getElementById("login-form");
+      form.style.display = "block";
+      form.classList.add("animate-up");
+    }
+
     if (keepSignedIn && savedUser) {
-      // Auto login only if user chose to stay signed in
+      /* ── Returning user: full-screen splash while Firebase re-checks ── */
+      document.getElementById("splash-full").style.display = "flex";
+
       onAuthStateChanged(auth, async (firebaseUser) => {
         if (firebaseUser) {
           try {
             const token = await firebaseUser.getIdToken();
-            const res = await fetch("https://web-production-dc086.up.railway.app/auth/verify", {
+            const res   = await fetch("https://web-production-dc086.up.railway.app/auth/verify", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ token })
             });
             if (res.ok) {
-              const user = await res.json();
-              user.name  = firebaseUser.displayName || "Student";
-              user.email = firebaseUser.email;
+              const user  = await res.json();
+              user.name   = firebaseUser.displayName || "Student";
+              user.email  = firebaseUser.email;
               localStorage.setItem("user", JSON.stringify(user));
-              window.location.href = "dashboard.html";
+              /* Fade splash out, then navigate */
+              dismissOverlay("splash-full", () => { window.location.href = "dashboard.html"; });
+              return;
             }
-          } catch (err) {
-            console.error("Auto login failed", err);
-          }
+          } catch (err) { console.error("Auto login failed", err); }
         }
+        /* Re-auth failed — clear state and drop to login form */
+        signOut(auth);
+        localStorage.removeItem("user");
+        dismissOverlay("splash-full", showLoginForm);
       });
+
     } else {
-      // Force sign out so Firebase session doesn't auto-restore
+      /* ── Guest: mini splash shown briefly, then login form ── */
       signOut(auth);
       localStorage.removeItem("user");
+      document.getElementById("splash-mini").style.display = "flex";
+      setTimeout(() => dismissOverlay("splash-mini", showLoginForm), 900);
     }
 
-    window.login = async function() {
+    /* ── Manual login ─────────────────────────────────────── */
+    window.login = async function () {
       const email    = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
       const keep     = document.getElementById("keepSignedIn").checked;
       const msg      = document.getElementById("msg");
       const btn      = document.getElementById("btn");
 
-      if (!email || !password) {
-        msg.textContent = "Please enter your email and password";
-        return;
-      }
-
-      btn.textContent = "Logging in...";
-      msg.textContent = "";
+      if (!email || !password) { msg.textContent = "Please enter your email and password"; return; }
+      btn.textContent = "Logging in…"; msg.textContent = "";
 
       try {
         const result = await signInWithEmailAndPassword(auth, email, password);
         const token  = await result.user.getIdToken();
-        const res = await fetch("https://web-production-dc086.up.railway.app/auth/verify", {
+        const res    = await fetch("https://web-production-dc086.up.railway.app/auth/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token })
         });
         if (res.ok) {
-          const user = await res.json();
-          user.name  = result.user.displayName || "Student";
-          user.email = result.user.email;
+          const user  = await res.json();
+          user.name   = result.user.displayName || "Student";
+          user.email  = result.user.email;
           localStorage.setItem("user", JSON.stringify(user));
           localStorage.setItem("keepSignedIn", keep ? "true" : "false");
           window.location.href = "dashboard.html";
@@ -173,7 +291,7 @@
         msg.textContent = "Login failed: " + err.message;
         btn.textContent = "Login";
       }
-    }
+    };
   </script>
 </body>
 </html>

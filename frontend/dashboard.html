@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Planner">
   <link rel="manifest" href="manifest.json">
   <title>Dashboard</title>
+  
   <script>
     // ── Register Service Worker as early as possible ──────────
     if ('serviceWorker' in navigator) {
@@ -18,18 +19,79 @@
       });
     }
   </script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root {
-      --bg:#0F0E17; --card:#1C1B29; --card-hover:#222133; --card2:#26253A;
-      --p:#7C6FF7; --p2:#a29bfe; --t:#00D4A8; --t2:#55efc4;
-      --text:#FFFFFE; --sub:#A7A9BE; --border:rgba(255,255,255,0.08);
-    }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-           background: var(--bg); color: var(--text);
-           padding-bottom: max(90px, calc(70px + env(safe-area-inset-bottom)));
-           overflow-x: hidden; }
 
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary": "#2f3131", "error-container": "#93000a", "error": "#ffb4ab", "primary": "#ffffff",
+            "on-secondary-container": "#b5b5b5", "tertiary-fixed": "#b9ecee", "tertiary-container": "#b9ecee",
+            "surface-tint": "#c6c6c7", "on-surface": "#e5e2e1", "inverse-surface": "#e5e2e1",
+            "background": "#141313", "surface-container-high": "#2a2a2a", "on-tertiary-fixed-variant": "#1a4e50",
+            "surface-container-low": "#1c1b1b", "surface-bright": "#3a3939", "on-primary-fixed-variant": "#454747",
+            "tertiary-fixed-dim": "#9ecfd1", "on-tertiary": "#003739", "on-secondary-fixed": "#1a1c1c",
+            "tertiary": "#ffffff", "primary-fixed-dim": "#c6c6c7", "on-primary-fixed": "#1a1c1c",
+            "on-primary-container": "#636565", "on-background": "#e5e2e1", "on-secondary-fixed-variant": "#464747",
+            "primary-container": "#e2e2e2", "outline-variant": "#444748", "surface-container-lowest": "#0e0e0e",
+            "secondary-fixed-dim": "#c7c6c6", "on-error-container": "#ffdad6", "surface-variant": "#353434",
+            "on-surface-variant": "#c4c7c8", "outline": "#8e9192", "inverse-on-surface": "#313030",
+            "secondary": "#c7c6c6", "surface-container": "#201f1f", "on-tertiary-container": "#3c6c6e",
+            "inverse-primary": "#5d5f5f", "surface-dim": "#141313", "secondary-container": "#464747",
+            "on-tertiary-fixed": "#002021", "on-error": "#690005", "primary-fixed": "#e2e2e2",
+            "surface-container-highest": "#353434", "secondary-fixed": "#e3e2e2", "on-secondary": "#2f3131",
+            "surface": "#141313"
+          },
+          "fontFamily": {
+            "body-lg": ["Space Grotesk"], "h1": ["Space Grotesk"], "body-sm": ["Space Grotesk"],
+            "h2": ["Space Grotesk"], "label": ["Space Grotesk"]
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #141313;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 100%),
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: max(884px, 100dvh);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .wobbly-box {
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+    }
+    .wobbly-box::before {
+      content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+      border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 6px; transform: rotate(-0.5deg); pointer-events: none;
+    }
+    .chalk-dashed {
+      border: 2px dashed rgba(255, 255, 255, 0.3); border-radius: 4px; transform: rotate(0.2deg);
+    }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .chalk-text { color: rgba(255, 255, 255, 0.85); text-shadow: 0 0 2px rgba(255, 255, 255, 0.1); }
+    .chalk-dim { color: rgba(255, 255, 255, 0.5); }
+    .chalk-swipe {
+      height: 2px; width: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.2) 80%, transparent);
+    }
+
+    /* Animations */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px) scale(0.98); }
       to   { opacity: 1; transform: translateY(0) scale(1); }
@@ -39,203 +101,95 @@
     .a3 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
     .a4 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
     .a5 { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
-
-    /* Header */
-    .header { background: radial-gradient(circle at top right, #2a1b6e, #130c29);
-              padding: max(56px, calc(36px + env(safe-area-inset-top))) 22px 72px;
-              position: relative; overflow: visible; border-bottom: 1px solid var(--border); }
-    .header::before { content: ''; position: absolute; top: -50px; right: -50px;
-                      width: 250px; height: 250px;
-                      background: radial-gradient(circle, rgba(124,111,247,0.3) 0%, transparent 70%);
-                      border-radius: 50%; filter: blur(20px); z-index: 0; }
-    .header::after { content: ''; position: absolute; bottom: -40px; left: 0; right: 0;
-                     height: 80px; background: var(--bg); border-radius: 40px 40px 0 0; z-index: 1; }
-    .header-top { display: flex; justify-content: space-between; align-items: flex-start;
-                  position: relative; z-index: 2; }
-    .greeting     { font-size: 28px; font-weight: 800; color: white; letter-spacing: -0.5px; }
-    .greeting-sub { font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 6px; font-weight: 500; }
-    .avatar { width: 46px; height: 46px; background: linear-gradient(135deg, var(--p), var(--p2));
-              border-radius: 16px; display: flex; align-items: center; justify-content: center;
-              font-size: 18px; font-weight: 700; color: white; cursor: pointer;
-              flex-shrink: 0; text-decoration: none; box-shadow: 0 8px 20px rgba(124,111,247,0.3);
-              transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-    .avatar:active { transform: scale(0.9); }
-
-    /* Stats */
-    .stats { display: flex; gap: 14px; padding: 0 18px; margin-top: -30px;
-             position: relative; z-index: 3; }
-    .stat { flex: 1; background: rgba(28,27,41,0.85); backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px; padding: 20px 14px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: transform 0.3s ease; }
-    .stat-num   { font-size: 34px; font-weight: 800;
-                  background: linear-gradient(135deg, var(--p2), var(--p));
-                  -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase;
-                  letter-spacing: 0.5px; color: var(--sub); margin-top: 6px; }
-
-    /* Classroom Sync Button */
-    .sync-btn { display: flex; align-items: center; gap: 12px; padding: 16px 18px;
-                background: rgba(28,27,41,0.9); border: 1px solid rgba(255,255,255,0.1);
-                border-radius: 18px; cursor: pointer; text-decoration: none;
-                transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-                box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
-    .sync-btn:active { transform: scale(0.97); background: var(--card2); }
-    .sync-icon { font-size: 24px; flex-shrink: 0; }
-    .sync-text { flex: 1; }
-    .sync-title { font-size: 15px; font-weight: 700; color: var(--text); }
-    .sync-sub   { font-size: 12px; color: var(--sub); margin-top: 2px; }
-    .sync-arrow { font-size: 16px; color: var(--sub); flex-shrink: 0; }
-    .sync-badge { background: linear-gradient(135deg, #4285F4, #34A853);
-                  color: white; font-size: 10px; font-weight: 700; padding: 3px 8px;
-                  border-radius: 20px; letter-spacing: 0.3px; flex-shrink: 0; }
-
-    /* Content */
-    .content { padding: 20px 18px; }
-    .section-title { font-size: 18px; font-weight: 700; color: var(--text);
-                     margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .notif { background: rgba(255,217,125,0.1); border: 1px solid rgba(255,217,125,0.2);
-             border-radius: 16px; padding: 16px; margin-bottom: 24px;
-             font-size: 14px; color: #FFD97D; line-height: 1.6; display: none; }
-
-    /* Cards */
-    .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px;
-                 padding: 18px; margin-bottom: 12px;
-                 display: flex; justify-content: space-between; align-items: center;
-                 cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-    .item-card:active { transform: scale(0.97); }
-    .item-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-    .item-sub   { font-size: 13px; color: var(--sub); }
-    .item-date  { font-size: 12px; color: var(--sub); margin-top: 6px;
-                  display: flex; align-items: center; gap: 4px; }
-    .badge { font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 20px;
-             white-space: nowrap; letter-spacing: 0.5px; }
-    .badge.assignment { background: rgba(124,111,247,0.15); color: var(--p2);
-                        border: 1px solid rgba(124,111,247,0.3); }
-    .badge.exam       { background: rgba(0,212,168,0.15); color: var(--t);
-                        border: 1px solid rgba(0,212,168,0.3); }
-    .empty { text-align: center; color: var(--sub); padding: 30px 0; font-size: 14px;
-             background: rgba(255,255,255,0.02); border-radius: 16px;
-             border: 1px dashed var(--border); }
-
-    /* Bottom Nav */
-    .bnav { position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(20,19,34,0.85); backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px); border-top: 1px solid rgba(255,255,255,0.08);
-            padding: 12px 0 max(20px, env(safe-area-inset-bottom));
-            display: flex; z-index: 100; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); }
-    .bnav a { flex: 1; display: flex; flex-direction: column; align-items: center;
-              text-decoration: none; gap: 5px;
-              transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-    .bnav a:active { transform: scale(0.85); }
-    .bnav-icon  { font-size: 22px; filter: grayscale(100%) opacity(0.6);
-                  transition: all 0.3s ease; }
-    .bnav-label { font-size: 10px; font-weight: 700; color: var(--sub);
-                  text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
-    .bnav a.active .bnav-icon  { filter: grayscale(0%) opacity(1); transform: translateY(-2px); }
-    .bnav a.active .bnav-label { color: var(--p2); }
-
-    /* New assignments banner */
-.new-assign-banner { background: rgba(66,133,244,0.12); border: 1px solid rgba(66,133,244,0.3);
-                     border-radius: 16px; padding: 16px; margin-bottom: 20px;
-                     display: none; }
-.new-assign-title  { font-size: 15px; font-weight: 700; color: #7AB4F5; margin-bottom: 8px; }
-.new-assign-item   { background: rgba(255,255,255,0.05); border-radius: 10px;
-                     padding: 10px 12px; margin-bottom: 6px;
-                     display: flex; align-items: center; gap: 10px; }
-.new-assign-item input[type="checkbox"] { width: 18px; height: 18px;
-                                          accent-color: #4285F4; flex-shrink: 0; cursor: pointer; }
-.new-assign-name   { font-size: 13px; font-weight: 600; flex: 1; }
-.new-assign-course { font-size: 12px; color: var(--sub); }
-.new-assign-due    { font-size: 11px; color: var(--p2); font-weight: 500; margin-top: 2px; }
-.new-assign-btns   { display: flex; gap: 8px; margin-top: 10px; }
-.import-new-btn    { flex: 1; padding: 11px; background: linear-gradient(135deg, #4285F4, #34A853);
-                     color: white; border: none; border-radius: 12px;
-                     font-size: 14px; font-weight: 700; cursor: pointer;
-                     transition: transform 0.15s; }
-.import-new-btn:active { transform: scale(0.97); }
-.dismiss-btn       { padding: 11px 16px; background: rgba(255,255,255,0.06);
-                     border: 1px solid var(--border); color: var(--sub); border-radius: 12px;
-                     font-size: 14px; cursor: pointer; }
   </style>
 </head>
-<body>
+<body class="min-h-screen pb-32 text-zinc-50">
 
-  <div class="header a1">
-    <div class="header-top">
-      <div>
-        <div class="greeting" id="greeting">Hello 👋</div>
-        <div class="greeting-sub">Your planner overview</div>
+  <header class="bg-zinc-950 docked full-width top-0 border-b-4 border-zinc-200/20 z-40 sticky a1">
+    <div class="flex justify-between items-center w-full px-6 py-6 max-w-screen-xl mx-auto">
+      <div class="flex flex-col">
+        <h1 id="greeting" class="text-[26px] font-black text-zinc-50 -rotate-1 font-['Space_Grotesk'] tracking-tight">Hello 👋</h1>
       </div>
-      <a href="account.html" class="avatar" id="avatar">A</a>
-    </div>
-  </div>
-
-  <div class="stats a2">
-    <div class="stat">
-      <div class="stat-num" id="aCount">—</div>
-      <div class="stat-label">Pending</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num" id="eCount">—</div>
-      <div class="stat-label">Exams</div>
-    </div>
-  </div>
-
-  <div class="content">
-
-    <!-- Google Classroom Sync -->
-    <div class="a3" style="margin-bottom: 24px;">
-      <a href="classroom-callback.html" class="sync-btn">
-        <span class="sync-icon">🎓</span>
-        <div class="sync-text">
-          <div class="sync-title">Sync Google Classroom</div>
-          <div class="sync-sub">Import your assignments automatically</div>
-        </div>
-        <span class="sync-badge">Google</span>
-        <span class="sync-arrow">→</span>
+      <a href="account.html" id="avatar" class="w-12 h-12 rounded-full border-2 border-zinc-200/40 rotate-2 flex items-center justify-center text-xl font-bold chalk-text bg-white/5 hover:bg-white/10 hover:scale-105 transition-all">
+        A
       </a>
     </div>
+  </header>
 
-    <!-- Auto-sync new assignments banner -->
-<div id="new-assignments-banner" class="new-assign-banner a3">
-  <div class="new-assign-title">🎓 New assignments found in Classroom</div>
-  <div id="new-assign-list"></div>
-  <div class="new-assign-btns">
-    <button class="import-new-btn" onclick="importNewAssignments()">Import Selected</button>
-    <button class="dismiss-btn"    onclick="dismissNewAssignments()">Dismiss</button>
-  </div>
-</div>
+  <main class="max-w-screen-xl mx-auto px-6 mt-8 space-y-8">
+    
+    <section class="grid grid-cols-2 gap-4 a2">
+      <div class="wobbly-box p-4 -rotate-1 hover:scale-105 transition-transform">
+        <p class="font-label text-label chalk-dim uppercase tracking-widest mb-1">Status</p>
+        <h3 class="font-h2 text-h2 chalk-text text-xl">Pending (<span id="aCount">—</span>)</h3>
+      </div>
+      <div class="wobbly-box p-4 rotate-1 hover:scale-105 transition-transform">
+        <p class="font-label text-label chalk-dim uppercase tracking-widest mb-1">Upcoming</p>
+        <h3 class="font-h2 text-h2 chalk-text text-xl">Exams (<span id="eCount">—</span>)</h3>
+      </div>
+    </section>
 
-    <!-- Notification Banner -->
-    <div id="notif-banner" class="notif a3"></div>
+    <a href="classroom-callback.html" class="block a3 decoration-none">
+      <section class="chalk-dashed p-6 flex items-center justify-between bg-white/5 cursor-pointer hover:bg-white/10 transition-colors">
+        <div class="flex items-center gap-4">
+          <span class="material-symbols-outlined chalk-text text-3xl">sync</span>
+          <div>
+            <p class="font-body-lg text-body-lg chalk-text font-bold">Sync Google Classroom</p>
+            <p class="font-body-sm text-body-sm chalk-dim mt-1">Import latest schedules</p>
+          </div>
+        </div>
+        <span class="material-symbols-outlined chalk-dim">chevron_right</span>
+      </section>
+    </a>
 
-    <!-- Upcoming -->
-    <div class="a4">
-      <div class="section-title"><span>⏰</span> Next 7 days</div>
-      <div id="upcoming"></div>
+    <div id="notif-banner" class="hidden a3 wobbly-box p-4 -rotate-0.5 border-dashed border-amber-400/50 bg-amber-400/10 mb-6"></div>
+    
+    <div id="new-assignments-banner" class="hidden a3 wobbly-box p-5 border-blue-400/50 bg-blue-400/5 mb-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="material-symbols-outlined text-blue-400">school</span>
+        <h3 class="text-sm font-bold chalk-text">New Classroom Assignments</h3>
+      </div>
+      <div id="new-assign-list" class="space-y-3 mb-5"></div>
+      <div class="flex gap-3">
+        <button class="flex-1 bg-white/10 border border-white/20 hover:bg-white/20 text-sm font-bold p-2 rounded wobbly-box transition-colors text-blue-300" onclick="importNewAssignments()">Import Selected</button>
+        <button class="px-4 border border-white/20 text-sm chalk-dim hover:bg-white/5 rounded wobbly-box transition-colors" onclick="dismissNewAssignments()">Dismiss</button>
+      </div>
     </div>
 
-    <!-- Later -->
-    <div class="a5" style="margin-top: 28px;">
-      <div class="section-title"><span>📋</span> Later</div>
-      <div id="later"></div>
-    </div>
+    <section class="space-y-4 a4">
+      <div class="flex items-center gap-3">
+        <h2 class="font-h2 text-h2 chalk-text text-xl">Next 7 Days</h2>
+        <div class="chalk-swipe flex-1 opacity-40"></div>
+      </div>
+      <div id="upcoming" class="space-y-4"></div>
+    </section>
 
-  </div>
+    <section class="space-y-4 pb-12 a5">
+      <div class="flex items-center gap-3 mt-4">
+        <h2 class="font-h2 text-h2 chalk-text text-xl">Later</h2>
+        <div class="chalk-swipe flex-1 opacity-40"></div>
+      </div>
+      <div id="later" class="space-y-4"></div>
+    </section>
 
-  <nav class="bnav">
-    <a href="dashboard.html" class="active">
-      <span class="bnav-icon">🏠</span><span class="bnav-label">Home</span>
+  </main>
+
+  <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-zinc-950 border-t-4 border-zinc-200/20 rounded-t-lg">
+    <a href="dashboard.html" class="flex flex-col items-center justify-center bg-zinc-100/10 border-2 border-zinc-50 rounded-md px-3 py-1 -rotate-1 scale-110 transition-transform duration-150 text-zinc-50">
+      <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+      <span class="font-['Space_Grotesk'] text-[10px] font-bold">Today</span>
     </a>
-    <a href="assignments.html">
-      <span class="bnav-icon">📝</span><span class="bnav-label">Tasks</span>
+    <a href="assignments.html" class="flex flex-col items-center justify-center text-zinc-500 opacity-70 px-3 py-1 hover:bg-zinc-800 hover:text-zinc-50 transition-colors rounded-md">
+      <span class="material-symbols-outlined" data-icon="checklist">checklist</span>
+      <span class="font-['Space_Grotesk'] text-[10px] font-medium">Tasks</span>
     </a>
-    <a href="exams.html">
-      <span class="bnav-icon">📅</span><span class="bnav-label">Exams</span>
+    <a href="exams.html" class="flex flex-col items-center justify-center text-zinc-500 opacity-70 px-3 py-1 hover:bg-zinc-800 hover:text-zinc-50 transition-colors rounded-md">
+      <span class="material-symbols-outlined" data-icon="edit_document">edit_document</span>
+      <span class="font-['Space_Grotesk'] text-[10px] font-medium">Exams</span>
     </a>
-    <a href="account.html">
-      <span class="bnav-icon">👤</span><span class="bnav-label">Account</span>
+    <a href="account.html" class="flex flex-col items-center justify-center text-zinc-500 opacity-70 px-3 py-1 hover:bg-zinc-800 hover:text-zinc-50 transition-colors rounded-md">
+      <span class="material-symbols-outlined" data-icon="person">person</span>
+      <span class="font-['Space_Grotesk'] text-[10px] font-medium">Account</span>
     </a>
   </nav>
 
@@ -246,7 +200,7 @@
     const hour  = new Date().getHours();
     const greet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
     const name  = user.name || "Student";
-    document.getElementById("greeting").textContent = greet + ", " + name.split(" ")[0] + " 👋";
+    document.getElementById("greeting").textContent = greet + ", " + name.split(" ")[0];
     document.getElementById("avatar").textContent   = name.charAt(0).toUpperCase();
 
     async function load() {
@@ -267,16 +221,17 @@
         const reminders = [];
         assignments.filter(a => !a.completed).forEach(a => {
           const d = new Date(a.dueDate);
-          if (d >= today3 && d <= in3) reminders.push("📝 " + a.title + " due " + a.dueDate);
+          if (d >= today3 && d <= in3) reminders.push(a.title + " (Due: " + a.dueDate + ")");
         });
         exams.forEach(e => {
           const d = new Date(e.examDate);
-          if (d >= today3 && d <= in3) reminders.push("📅 " + e.title + " on " + e.examDate);
+          if (d >= today3 && d <= in3) reminders.push("Exam: " + e.title + " (On: " + e.examDate + ")");
         });
         if (reminders.length) {
           const b = document.getElementById("notif-banner");
           b.style.display = "block";
-          b.innerHTML = "🔔 <strong>Due soon:</strong><br>" + reminders.map(r => "• " + r).join("<br>");
+          b.innerHTML = "<div class='text-sm chalk-text mb-2 flex items-center gap-2'><span class='material-symbols-outlined'>warning</span><strong>Incoming Deadlines:</strong></div>" + 
+                        reminders.map(r => "<div class='text-xs font-bold chalk-dim ml-7 mb-1'>• " + r + "</div>").join("");
         }
 
         // Sort and split by timeframe
@@ -296,56 +251,40 @@
         renderList("upcoming", items.filter(i => i.deadline >= today && i.deadline <= in7));
         renderList("later",    items.filter(i => i.deadline > in7));
 
-        // ── Push notifications: 3-day, 2-day, 1-day reminders ──
         checkAndNotify(items);
-
       } catch(e) { console.error(e); }
     }
 
     // ─────────────────────────────────────────────────────────
-    // checkAndNotify — fires lock-screen notifications for items
-    // due in exactly 1, 2, or 3 days. Uses localStorage to
-    // deduplicate so the same alert only fires once per day.
+    // checkAndNotify — Push notifications using existing logic
     // ─────────────────────────────────────────────────────────
     async function checkAndNotify(items) {
-      // 1. Ask for permission if not already decided
-      if (!('Notification' in window)) return; // browser doesn't support it
-      if (Notification.permission === 'default') {
-        await Notification.requestPermission();
-      }
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'default') await Notification.requestPermission();
       if (Notification.permission !== 'granted') return;
 
-      // 2. Wait for the service worker to be ready
       if (!('serviceWorker' in navigator)) return;
       let reg;
-      try {
-        reg = await navigator.serviceWorker.ready;
-      } catch(e) { return; }
+      try { reg = await navigator.serviceWorker.ready; } catch(e) { return; }
 
-      // 3. Today's date string used in the dedup key
       const todayStr = new Date().toISOString().split('T')[0];
-
-      // Threshold days we notify on
       const THRESHOLDS = [
         { days: 3, label: 'in 3 days',  urgency: '' },
         { days: 2, label: 'in 2 days',  urgency: '' },
         { days: 1, label: 'TOMORROW',   urgency: '🚨 ' }
       ];
-
       const today0 = new Date(); today0.setHours(0,0,0,0);
 
       for (const item of items) {
-        // Days until deadline (whole days)
         const msPerDay = 24 * 60 * 60 * 1000;
         const deadlineDay = new Date(item.deadline); deadlineDay.setHours(0,0,0,0);
         const daysAway = Math.round((deadlineDay - today0) / msPerDay);
-
         const threshold = THRESHOLDS.find(t => t.days === daysAway);
+        
         if (!threshold) continue;
 
-        // Dedup key — one notification per item per threshold per calendar day
         const dedupKey = `notified_${todayStr}_${item.id}_${daysAway}d`;
-        if (localStorage.getItem(dedupKey)) continue; // already sent today
+        if (localStorage.getItem(dedupKey)) continue;
 
         const isExam = item.type === 'exam';
         const emoji  = isExam ? '📅' : '📝';
@@ -357,180 +296,161 @@
         const tag   = `${item.id}-${daysAway}d`;
 
         try {
-          // Use postMessage to the SW — works even when the page is in foreground
-          if (reg.active) {
-            reg.active.postMessage({ type: 'SHOW_NOTIFICATION', title, body, tag });
-          } else {
-            // Fallback: direct Notification API
-            new Notification(title, { body, icon: 'icon.png', tag });
-          }
+          if (reg.active) { reg.active.postMessage({ type: 'SHOW_NOTIFICATION', title, body, tag }); } 
+          else { new Notification(title, { body, icon: 'icon.png', tag }); }
           localStorage.setItem(dedupKey, '1');
         } catch(e) { console.warn('Notification failed:', e); }
       }
     }
 
-    // Auto-sync from Classroom on every dashboard open
-async function autoSyncClassroom() {
-  const token     = localStorage.getItem("classroomToken");
-  const tokenTime = localStorage.getItem("classroomTokenTime");
-  if (!token || !tokenTime) return;
+    // ─────────────────────────────────────────────────────────
+    // Classroom Auto Sync using existing logic
+    // ─────────────────────────────────────────────────────────
+    async function autoSyncClassroom() {
+      const token     = localStorage.getItem("classroomToken");
+      const tokenTime = localStorage.getItem("classroomTokenTime");
+      if (!token || !tokenTime) return;
 
-  // Token expires after 1 hour
-  const age = Date.now() - parseInt(tokenTime);
-  if (age > 55 * 60 * 1000) {
-    localStorage.removeItem("classroomToken");
-    localStorage.removeItem("classroomTokenTime");
-    return;
-  }
+      const age = Date.now() - parseInt(tokenTime);
+      if (age > 55 * 60 * 1000) {
+        localStorage.removeItem("classroomToken");
+        localStorage.removeItem("classroomTokenTime");
+        return;
+      }
 
-  try {
-    // Fetch courses
-    const cRes    = await fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE", {
-      headers: { Authorization: "Bearer " + token }
-    });
-    const cData   = await cRes.json();
-    if (!cData.courses) return;
-
-    // Fetch all assignments
-    const today = new Date(); today.setHours(0,0,0,0);
-    const allWork = [];
-    for (const course of cData.courses) {
       try {
-        const wRes  = await fetch(`https://classroom.googleapis.com/v1/courses/${course.id}/courseWork`, {
-          headers: { Authorization: "Bearer " + token }
-        });
-        const wData = await wRes.json();
-        for (const a of (wData.courseWork || [])) {
-          let dueDate = null;
-          if (a.dueDate) {
-            const m = String(a.dueDate.month).padStart(2, "0");
-            const d = String(a.dueDate.day).padStart(2, "0");
-            dueDate = `${a.dueDate.year}-${m}-${d}`;
-          }
-          // Only future or no due date
-          if (!dueDate || new Date(dueDate) >= today) {
-            allWork.push({ title: a.title, course: course.name, dueDate });
-          }
+        const cRes  = await fetch("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE", { headers: { Authorization: "Bearer " + token } });
+        const cData = await cRes.json();
+        if (!cData.courses) return;
+
+        const today = new Date(); today.setHours(0,0,0,0);
+        const allWork = [];
+        
+        for (const course of cData.courses) {
+          try {
+            const wRes  = await fetch(`https://classroom.googleapis.com/v1/courses/${course.id}/courseWork`, { headers: { Authorization: "Bearer " + token } });
+            const wData = await wRes.json();
+            for (const a of (wData.courseWork || [])) {
+              let dueDate = null;
+              if (a.dueDate) {
+                const m = String(a.dueDate.month).padStart(2, "0");
+                const d = String(a.dueDate.day).padStart(2, "0");
+                dueDate = `${a.dueDate.year}-${m}-${d}`;
+              }
+              if (!dueDate || new Date(dueDate) >= today) {
+                allWork.push({ title: a.title, course: course.name, dueDate });
+              }
+            }
+          } catch(e) {}
         }
-      } catch(e) {}
+
+        const aRes      = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`);
+        const existing  = await aRes.json();
+        const existingTitles = new Set(existing.map(a => a.title.toLowerCase().trim()));
+
+        const dismissed  = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
+        const newOnes    = allWork.filter(a =>
+          !existingTitles.has(a.title.toLowerCase().trim()) &&
+          !dismissed.includes(a.title.toLowerCase().trim())
+        );
+
+        if (!newOnes.length) return;
+
+        const banner = document.getElementById("new-assignments-banner");
+        const list   = document.getElementById("new-assign-list");
+        banner.style.display = "block";
+        list.innerHTML = "";
+
+        // Render dynamically with chalkboard classes
+        newOnes.forEach((a, i) => {
+          list.innerHTML += `
+            <div class="flex items-start gap-3 wobbly-box p-3 border-white/10 bg-transparent">
+              <input type="checkbox" id="nw_${i}" checked class="mt-1 w-4 h-4 bg-transparent border-white/50 rounded focus:ring-0 text-white cursor-pointer" />
+              <div class="flex-1">
+                <div class="text-sm chalk-text font-bold leading-tight">${a.title}</div>
+                <div class="text-xs chalk-dim mt-1">${a.course}</div>
+                ${a.dueDate
+                  ? `<div class="text-[10px] chalk-dim mt-1 font-bold tracking-widest uppercase">DUE: ${a.dueDate}</div>`
+                  : `<div class="text-[10px] text-red-400 mt-1 font-bold tracking-widest uppercase">No due date</div>`}
+              </div>
+            </div>`;
+        });
+
+        window._newAssignments = newOnes;
+
+      } catch(e) { console.error("Auto-sync error:", e); }
     }
 
-    // Compare with already imported assignments
-    const aRes      = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`);
-    const existing  = await aRes.json();
-    const existingTitles = new Set(existing.map(a => a.title.toLowerCase().trim()));
+    async function importNewAssignments() {
+      const checkboxes = document.querySelectorAll("[id^='nw_']");
+      const today      = new Date(); today.setDate(today.getDate() + 7);
+      const defaultDate = today.toISOString().split("T")[0];
+      let imported = 0;
 
-    // Find genuinely new ones
-    const dismissed  = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
-    const newOnes    = allWork.filter(a =>
-      !existingTitles.has(a.title.toLowerCase().trim()) &&
-      !dismissed.includes(a.title.toLowerCase().trim())
-    );
+      for (let i = 0; i < checkboxes.length; i++) {
+        if (!checkboxes[i].checked) continue;
+        const a = window._newAssignments[i];
+        try {
+          await fetch("https://web-production-dc086.up.railway.app/assignments", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: a.title, subjectName: a.course, dueDate: a.dueDate || defaultDate, userId: user.uid })
+          });
+          imported++;
+        } catch(e) {}
+      }
 
-    if (!newOnes.length) return;
+      document.getElementById("new-assignments-banner").style.display = "none";
+      if (imported > 0) {
+        load();
+      }
+    }
 
-    // Show banner
-    const banner = document.getElementById("new-assignments-banner");
-    const list   = document.getElementById("new-assign-list");
-    banner.style.display = "block";
-    list.innerHTML = "";
+    function dismissNewAssignments() {
+      const dismissed = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
+      (window._newAssignments || []).forEach(a => { dismissed.push(a.title.toLowerCase().trim()); });
+      localStorage.setItem("dismissedAssignments", JSON.stringify(dismissed));
+      document.getElementById("new-assignments-banner").style.display = "none";
+    }
 
-    newOnes.forEach((a, i) => {
-      list.innerHTML += `
-        <div class="new-assign-item">
-          <input type="checkbox" id="nw_${i}" checked />
-          <div style="flex:1">
-            <div class="new-assign-name">${a.title}</div>
-            <div class="new-assign-course">${a.course}</div>
-            ${a.dueDate
-              ? `<div class="new-assign-due">Due: ${a.dueDate}</div>`
-              : `<div class="new-assign-due" style="color:#FF6B6B">No due date</div>`}
-          </div>
-        </div>`;
-    });
-
-    // Store for import
-    window._newAssignments = newOnes;
-
-  } catch(e) { console.error("Auto-sync error:", e); }
-}
-
-async function importNewAssignments() {
-  const checkboxes = document.querySelectorAll("[id^='nw_']");
-  const today      = new Date(); today.setDate(today.getDate() + 7);
-  const defaultDate = today.toISOString().split("T")[0];
-  let imported = 0;
-
-  for (let i = 0; i < checkboxes.length; i++) {
-    if (!checkboxes[i].checked) continue;
-    const a = window._newAssignments[i];
-    try {
-      await fetch("https://web-production-dc086.up.railway.app/assignments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title:       a.title,
-          subjectName: a.course,
-          dueDate:     a.dueDate || defaultDate,
-          userId:      user.uid
-        })
-      });
-      imported++;
-    } catch(e) {}
-  }
-
-  document.getElementById("new-assignments-banner").style.display = "none";
-  if (imported > 0) {
-    // Reload to show new assignments
-    load();
-    // Show quick toast
-    const toast = document.createElement("div");
-    toast.textContent = `✓ ${imported} assignment${imported > 1 ? "s" : ""} imported!`;
-    toast.style.cssText = `position:fixed;bottom:100px;left:50%;transform:translateX(-50%);
-      background:#00D4A8;color:#001a14;padding:10px 20px;border-radius:20px;
-      font-size:14px;font-weight:700;z-index:999;animation:fadeUp 0.3s ease both`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2500);
-  }
-}
-
-function dismissNewAssignments() {
-  // Remember dismissed so we don't show them again
-  const dismissed = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
-  (window._newAssignments || []).forEach(a => {
-    dismissed.push(a.title.toLowerCase().trim());
-  });
-  localStorage.setItem("dismissedAssignments", JSON.stringify(dismissed));
-  document.getElementById("new-assignments-banner").style.display = "none";
-}
-
+    // ─────────────────────────────────────────────────────────
+    // Dynamic List Renderer mapped to the chalkboard UI pattern
+    // ─────────────────────────────────────────────────────────
     function renderList(id, items) {
       const div = document.getElementById(id);
       div.innerHTML = "";
       if (!items.length) {
-        div.innerHTML = '<div class="empty">Nothing here 🎉</div>';
+        div.innerHTML = '<div class="chalk-dashed p-6 text-center chalk-dim text-sm mt-2">Nothing scheduled right now 🎉</div>';
         return;
       }
+      
+      const rotations = ['rotate-1', '-rotate-1', 'rotate-0.5', '-rotate-0.5'];
+      
       items.forEach((item, index) => {
-        const link = item.type === "exam"
-          ? `exam-detail.html?id=${item.id}`
-          : "assignments.html";
+        const link = item.type === "exam" ? `exam-detail.html?id=${item.id}` : "assignments.html";
+        const rotClass = rotations[index % 4];
+        
         div.innerHTML += `
-          <div class="item-card"
-               onclick="window.location.href='${link}'"
-               style="animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) ${index*0.05}s both">
-            <div>
-              <div class="item-title">${item.title}</div>
-              <div class="item-sub">${item.sub}</div>
-              <div class="item-date">⏳ ${item.date}</div>
+          <div onclick="window.location.href='${link}'" 
+               class="wobbly-box p-5 flex justify-between items-center transition-all cursor-pointer hover:rotate-0 hover:bg-white/5 ${rotClass}"
+               style="animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) ${index * 0.05}s both">
+            <div class="space-y-1">
+              <div class="flex gap-2 items-center mb-2">
+                <span class="bg-zinc-100/10 border border-zinc-50/20 px-2 py-0.5 rounded text-[10px] uppercase font-bold chalk-text">
+                  ${item.type === "exam" ? "Exam" : "Assignment"}
+                </span>
+                <p class="text-[10px] chalk-dim font-bold uppercase tracking-widest">${item.date}</p>
+              </div>
+              <h4 class="font-body-lg text-lg chalk-text font-bold leading-tight">${item.title}</h4>
+              <p class="font-body-sm text-body-sm chalk-dim pt-1">${item.sub}</p>
             </div>
-            <span class="badge ${item.type}">${item.type === "exam" ? "Exam" : "Task"}</span>
+            <span class="material-symbols-outlined text-zinc-500">chevron_right</span>
           </div>`;
       });
     }
 
+    // Initialize
     load();
-    autoSyncClassroom(); // check for new classroom assignments
+    autoSyncClassroom(); 
   </script>
 </body>
 </html>
