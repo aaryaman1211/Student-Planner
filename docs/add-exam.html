@@ -69,7 +69,7 @@
       const portion = Array.from(document.querySelectorAll(".ch-input")).map(i => i.value.trim()).filter(v => v).map(name => ({ name, completed: false }));
       if (!title || !subject || !examDate) { msg.style.color="#FF6B6B"; msg.textContent="Please fill title, subject and date"; return; }
       btn.textContent = "Saving...";
-      const res = await fetch("https://web-production-dc086.up.railway.app/exams", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, subjectName: subject, examDate, userId: user.uid, portion }) });
+      const res = await fetch("https://student-planner-iwxm.onrender.com/exams", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, subjectName: subject, examDate, userId: user.uid, portion }) });
       if (res.ok) { msg.style.color="#00D4A8"; msg.textContent="✓ Exam saved!"; setTimeout(() => window.location.href="exams.html", 800); } else { msg.style.color="#FF6B6B"; msg.textContent="Something went wrong"; btn.textContent="Save Exam"; }
     }
   </script>

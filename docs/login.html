@@ -227,7 +227,7 @@
         if (firebaseUser) {
           try {
             const token = await firebaseUser.getIdToken();
-            const res   = await fetch("https://web-production-dc086.up.railway.app/auth/verify", {
+            const res   = await fetch("https://student-planner-iwxm.onrender.com/auth/verify", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ token })
@@ -271,7 +271,7 @@
       try {
         const result = await signInWithEmailAndPassword(auth, email, password);
         const token  = await result.user.getIdToken();
-        const res    = await fetch("https://web-production-dc086.up.railway.app/auth/verify", {
+        const res    = await fetch("https://student-planner-iwxm.onrender.com/auth/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token })

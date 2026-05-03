@@ -42,7 +42,7 @@
     if (!user) window.location.href = "login.html";
 
     async function load() {
-      const res = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`);
+      const res = await fetch(`https://student-planner-iwxm.onrender.com/assignments/${user.uid}`);
       const data = await res.json();
       const list = document.getElementById("list");
       list.innerHTML = "";
@@ -75,8 +75,8 @@
       });
     }
 
-    async function complete(id) { await fetch(`https://web-production-dc086.up.railway.app/assignments/${id}/complete`, { method: "PUT" }); load(); }
-    async function del(id) { if (!confirm("Delete this assignment?")) return; await fetch(`https://web-production-dc086.up.railway.app/assignments/${id}`, { method: "DELETE" }); load(); }
+    async function complete(id) { await fetch(`https://student-planner-iwxm.onrender.com/assignments/${id}/complete`, { method: "PUT" }); load(); }
+    async function del(id) { if (!confirm("Delete this assignment?")) return; await fetch(`https://student-planner-iwxm.onrender.com/assignments/${id}`, { method: "DELETE" }); load(); }
     load();
   </script>
 </body>

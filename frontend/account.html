@@ -98,7 +98,7 @@
 
     async function loadStats() {
       try {
-        const [aRes, eRes] = await Promise.all([ fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`), fetch(`https://web-production-dc086.up.railway.app/exams/${user.uid}`) ]);
+        const [aRes, eRes] = await Promise.all([ fetch(`https://student-planner-iwxm.onrender.com/assignments/${user.uid}`), fetch(`https://student-planner-iwxm.onrender.com/exams/${user.uid}`) ]);
         const assignments = await aRes.json(); const exams = await eRes.json();
         document.getElementById("totalA").textContent = assignments.length;
         document.getElementById("doneA").textContent  = assignments.filter(a => a.completed).length;

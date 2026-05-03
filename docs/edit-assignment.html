@@ -48,7 +48,7 @@
       const title = document.getElementById("title").value.trim(), subject = document.getElementById("subject").value.trim(), dueDate = document.getElementById("dueDate").value, msg = document.getElementById("msg"), btn = document.getElementById("btn");
       if (!title || !subject || !dueDate) { msg.style.color="#FF6B6B"; msg.textContent="Please fill all fields"; return; }
       btn.textContent = "Saving...";
-      const res = await fetch("https://web-production-dc086.up.railway.app/assignments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, subjectName: subject, dueDate, userId: user.uid }) });
+      const res = await fetch("https://student-planner-iwxm.onrender.com/assignments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, subjectName: subject, dueDate, userId: user.uid }) });
       if (res.ok) { msg.style.color="#00D4A8"; msg.textContent="✓ Saved!"; setTimeout(() => window.location.href="assignments.html", 800); } else { msg.style.color="#FF6B6B"; msg.textContent="Something went wrong"; btn.textContent="Save Assignment"; }
     }
   </script>

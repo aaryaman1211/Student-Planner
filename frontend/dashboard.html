@@ -206,8 +206,8 @@
     async function load() {
       try {
         const [aRes, eRes] = await Promise.all([
-          fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`),
-          fetch(`https://web-production-dc086.up.railway.app/exams/${user.uid}`)
+          fetch(`https://student-planner-iwxm.onrender.com/assignments/${user.uid}`),
+          fetch(`https://student-planner-iwxm.onrender.com/exams/${user.uid}`)
         ]);
         const assignments = await aRes.json();
         const exams       = await eRes.json();
@@ -344,7 +344,7 @@
           } catch(e) {}
         }
 
-        const aRes      = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`);
+        const aRes      = await fetch(`https://student-planner-iwxm.onrender.com/assignments/${user.uid}`);
         const existing  = await aRes.json();
         const existingTitles = new Set(existing.map(a => a.title.toLowerCase().trim()));
 
@@ -391,7 +391,7 @@
         if (!checkboxes[i].checked) continue;
         const a = window._newAssignments[i];
         try {
-          await fetch("https://web-production-dc086.up.railway.app/assignments", {
+          await fetch("https://student-planner-iwxm.onrender.com/assignments", {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: a.title, subjectName: a.course, dueDate: a.dueDate || defaultDate, userId: user.uid })
           });

@@ -83,7 +83,7 @@
     let editMode = false, exam;
 
     async function load() {
-      const res = await fetch(`https://web-production-dc086.up.railway.app/exams/detail/${id}`);
+      const res = await fetch(`https://student-planner-iwxm.onrender.com/exams/detail/${id}`);
       exam = await res.json();
       document.getElementById("title").textContent = exam.title; document.getElementById("subject").textContent = exam.subjectName; document.getElementById("date").textContent = "📅 " + exam.examDate;
       document.getElementById("editTitle").value = exam.title; document.getElementById("editSubject").value = exam.subjectName; document.getElementById("editDate").value = exam.examDate;
@@ -115,12 +115,12 @@
       renderChapters();
     }
 
-    async function toggleChapter(index) { await fetch(`https://web-production-dc086.up.railway.app/exams/${id}/chapter/${index}`, { method: "PUT" }); load(); }
+    async function toggleChapter(index) { await fetch(`https://student-planner-iwxm.onrender.com/exams/${id}/chapter/${index}`, { method: "PUT" }); load(); }
     async function removeCh(index) { if (!confirm("Remove this chapter?")) return; exam.portion.splice(index, 1); await saveExam(); renderChapters(); updateProgress(); }
     function showAddRow() { document.getElementById("addRow").classList.remove("hidden"); document.getElementById("newChapter").focus(); }
     async function addChapter() { const input = document.getElementById("newChapter"), name = input.value.trim(); if (!name) return; exam.portion = exam.portion || []; exam.portion.push({ name, completed: false }); await saveExam(); input.value = ""; document.getElementById("addRow").classList.add("hidden"); renderChapters(); updateProgress(); }
     async function saveMeta() { exam.title = document.getElementById("editTitle").value.trim(); exam.subjectName = document.getElementById("editSubject").value.trim(); exam.examDate = document.getElementById("editDate").value; await saveExam(); load(); alert("✓ Saved!"); toggleEdit(); }
-    async function saveExam() { await fetch(`https://web-production-dc086.up.railway.app/exams/${id}/update`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(exam) }); }
+    async function saveExam() { await fetch(`https://student-planner-iwxm.onrender.com/exams/${id}/update`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(exam) }); }
     function updateProgress() {
       const portion = exam.portion || [], done = portion.filter(c => c.completed).length, total = portion.length, pct = total ? Math.round((done / total) * 100) : 0;
       document.getElementById("pct").innerHTML = pct + "<span class='text-xl text-emerald-400'>%</span>";

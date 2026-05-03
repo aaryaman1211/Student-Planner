@@ -86,7 +86,7 @@
       btn.textContent = `Importing ${selected.length}...`; btn.disabled = true; let imported = 0;
 
       for (const a of selected) {
-        try { await fetch("https://web-production-dc086.up.railway.app/assignments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: a.title, subjectName: a.course, dueDate: a.dueDate || defaultDate, userId: user.uid }) }); imported++; } catch (e) { console.error("Failed to import:", a.title); }
+        try { await fetch("https://student-planner-iwxm.onrender.com/assignments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: a.title, subjectName: a.course, dueDate: a.dueDate || defaultDate, userId: user.uid }) }); imported++; } catch (e) { console.error("Failed to import:", a.title); }
       }
 
       document.getElementById("card").innerHTML = `
@@ -103,7 +103,7 @@
         document.getElementById("subtitle").textContent = "Fetching your courses..."; const courses = await fetchCourses(accessToken);
         document.getElementById("subtitle").textContent = `Found ${courses.length} courses, fetching assignments...`; const allWork = [];
         for (const course of courses) { const work = await fetchAssignments(accessToken, course.id, course.name); allWork.push(...work); }
-        const aRes = await fetch(`https://web-production-dc086.up.railway.app/assignments/${user.uid}`), existing = await aRes.json(), existingTitles = new Set(existing.map(a => a.title.toLowerCase().trim())), dismissed = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
+        const aRes = await fetch(`https://student-planner-iwxm.onrender.com/assignments/${user.uid}`), existing = await aRes.json(), existingTitles = new Set(existing.map(a => a.title.toLowerCase().trim())), dismissed = JSON.parse(localStorage.getItem("dismissedAssignments") || "[]");
         const newOnly = allWork.filter(a => !existingTitles.has(a.title.toLowerCase().trim()) && !dismissed.includes(a.title.toLowerCase().trim()));
         if (!newOnly.length) {
           document.getElementById("spinner").style.display = "none"; document.getElementById("title").textContent = "All caught up! ✅"; document.getElementById("subtitle").textContent = "No new assignments to import";

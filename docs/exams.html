@@ -42,7 +42,7 @@
     if (!user) window.location.href = "login.html";
 
     async function load() {
-      const res  = await fetch(`https://web-production-dc086.up.railway.app/exams/${user.uid}`);
+      const res  = await fetch(`https://student-planner-iwxm.onrender.com/exams/${user.uid}`);
       const data = await res.json();
       const list = document.getElementById("list");
       list.innerHTML = "";
@@ -85,7 +85,7 @@
           </div>`;
       });
     }
-    async function del(id) { if (!confirm("Delete this exam?")) return; await fetch(`https://web-production-dc086.up.railway.app/exams/${id}`, { method: "DELETE" }); load(); }
+    async function del(id) { if (!confirm("Delete this exam?")) return; await fetch(`https://student-planner-iwxm.onrender.com/exams/${id}`, { method: "DELETE" }); load(); }
     load();
   </script>
 </body>
