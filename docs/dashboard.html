@@ -451,6 +451,12 @@
     // Initialize
     load();
     autoSyncClassroom(); 
+
+    // Keep Render awake — ping every 10 minutes
+setInterval(() => {
+  fetch("https://student-planner-iwxm.onrender.com/auth/verify", { method: "POST" })
+    .catch(() => {});
+}, 10 * 60 * 1000);
   </script>
 </body>
 </html>
